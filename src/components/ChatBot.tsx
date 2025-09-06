@@ -359,11 +359,11 @@ export function ChatBot({ className = "" }: ChatBotProps) {
           <div className="absolute inset-0 rounded-full bg-[#18B668] animate-ping opacity-25"></div>
 
           {/* Icon / Custom Logo */}
-      <div className="relative z-10 flex items-center justify-center h-full">
+          <div className="relative z-10 flex items-center justify-center h-full">
             <img
               src={botLogo}
               alt="Chatbot Logo"
-        className="w-14 h-14 object-contain pointer-events-none select-none drop-shadow-[0_3px_6px_rgba(0,0,0,0.5)]"
+              className="w-14 h-14 object-contain pointer-events-none select-none drop-shadow-[0_3px_6px_rgba(0,0,0,0.5)]"
               onError={(e) => {
                 (e.currentTarget as HTMLImageElement).style.display = "none";
               }}
