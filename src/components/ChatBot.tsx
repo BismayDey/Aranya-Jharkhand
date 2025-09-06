@@ -351,7 +351,7 @@ export function ChatBot({ className = "" }: ChatBotProps) {
               setHasShownWelcome(true);
             }
           }}
-          className="relative w-16 h-16 bg-[#18B668] rounded-full shadow-2xl hover:shadow-[0_8px_30px_-6px_rgba(24,182,104,0.6)] transition-all duration-300 group ring-1 ring-white/10"
+          className="relative w-20 h-20 bg-[#18B668] rounded-full shadow-2xl hover:shadow-[0_8px_34px_-4px_rgba(24,182,104,0.65)] transition-all duration-300 group ring-1 ring-white/10"
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }}
         >
@@ -359,11 +359,11 @@ export function ChatBot({ className = "" }: ChatBotProps) {
           <div className="absolute inset-0 rounded-full bg-[#18B668] animate-ping opacity-25"></div>
 
           {/* Icon / Custom Logo */}
-          <div className="relative z-10 flex items-center justify-center h-full">
+      <div className="relative z-10 flex items-center justify-center h-full">
             <img
               src={botLogo}
               alt="Chatbot Logo"
-              className="w-10 h-10 object-contain pointer-events-none select-none drop-shadow-[0_2px_4px_rgba(0,0,0,0.45)]"
+        className="w-14 h-14 object-contain pointer-events-none select-none drop-shadow-[0_3px_6px_rgba(0,0,0,0.5)]"
               onError={(e) => {
                 (e.currentTarget as HTMLImageElement).style.display = "none";
               }}
