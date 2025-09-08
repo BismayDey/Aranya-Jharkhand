@@ -296,23 +296,68 @@ export function ChatBot({ className = "" }: ChatBotProps) {
     };
 
     setMessages((prev) => [...prev, userMessage]);
+    const outgoing = inputValue;
     setInputValue("");
     setIsTyping(true);
 
-    // Simulate bot thinking time
-    setTimeout(() => {
-      const botResponse = getBotResponse(inputValue);
-      const botMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        type: "bot",
-        content: botResponse.content,
-        timestamp: new Date(),
-        suggestions: botResponse.suggestions,
-      };
+    // Try sending to remote chat server first, fall back to local responses on error
+    const sendToServer = async (msg: string) => {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 30000); // 30s
+      try {
+        const res = await fetch(
+          "https://aranya-new-chatbot.onrender.com/chat",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ msg }),
+            signal: controller.signal,
+          }
+        );
+        clearTimeout(timeout);
+        if (!res.ok) {
+          throw new Error(`Server error: ${res.status}`);
+        }
+        const data = await res.json();
+        if (data?.response) return data.response as string;
+        if (data?.error) throw new Error(data.error || "Unknown server error");
+        throw new Error("Invalid server response");
+      } catch (err: any) {
+        clearTimeout(timeout);
+        throw err;
+      }
+    };
 
-      setMessages((prev) => [...prev, botMessage]);
-      setIsTyping(false);
-    }, 1000 + Math.random() * 1500);
+    (async () => {
+      try {
+        const reply = await sendToServer(outgoing);
+        const botMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          type: "bot",
+          content: reply,
+          timestamp: new Date(),
+        };
+        setMessages((prev) => [...prev, botMessage]);
+      } catch (err) {
+        // Fallback: use local rule-based response if server fails
+        const botResponse = getBotResponse(outgoing);
+        const botMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          type: "bot",
+          content: (err as Error)?.message
+            ? `${botResponse.content}\n\n(Offline fallback: ${
+                (err as Error).message
+              })`
+            : botResponse.content,
+          timestamp: new Date(),
+          suggestions: botResponse.suggestions,
+        };
+        setMessages((prev) => [...prev, botMessage]);
+        toast.error("Chat server unreachable — using local fallback.");
+      } finally {
+        setIsTyping(false);
+      }
+    })();
   };
 
   const handleSuggestionClick = (suggestion: string) => {
@@ -388,9 +433,7 @@ export function ChatBot({ className = "" }: ChatBotProps) {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            className={`fixed inset-0 z-[9999] ${
-              isFullscreen ? "" : "pointer-events-none"
-            }`}
+            className={`fixed inset-0 z-[9999]`}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -409,7 +452,7 @@ export function ChatBot({ className = "" }: ChatBotProps) {
                 isFullscreen
                   ? "inset-4 md:inset-8"
                   : "bottom-6 right-6 w-96 h-[32rem]"
-              } glass-premium rounded-2xl shadow-2xl overflow-hidden pointer-events-auto`}
+              } glass-premium rounded-2xl shadow-2xl overflow-hidden pointer-events-auto flex flex-col`}
               initial={
                 isFullscreen
                   ? { scale: 0.5, opacity: 0 }
@@ -420,7 +463,7 @@ export function ChatBot({ className = "" }: ChatBotProps) {
               transition={{ type: "spring", stiffness: 300, damping: 25 }}
             >
               {/* Header */}
-              <div className="bg-gradient-to-r from-[#18B668] to-[#0EA5E9] p-4 text-white">
+              <div className="bg-gradient-to-r from-[#18B668] to-[#0EA5E9] p-4 text-white sticky top-0 z-30 flex-shrink-0">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-[#18B668] rounded-full flex items-center justify-center overflow-hidden shadow-md">
@@ -468,11 +511,9 @@ export function ChatBot({ className = "" }: ChatBotProps) {
               </div>
 
               {/* Messages Area */}
-              <div className="flex-1 flex flex-col h-full">
+              <div className="flex-1 flex flex-col min-h-0">
                 <ScrollArea
-                  className={`flex-1 p-4 chatbot-scroll ${
-                    isFullscreen ? "h-[calc(100vh-12rem)]" : "h-80"
-                  }`}
+                  className={`flex-1 p-4 chatbot-scroll overflow-auto`}
                 >
                   <div className="space-y-4">
                     {messages.map((message) => (
