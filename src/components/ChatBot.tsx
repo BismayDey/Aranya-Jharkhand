@@ -375,6 +375,46 @@ export function ChatBot({ className = "" }: ChatBotProps) {
     setIsFullscreen(!isFullscreen);
   };
 
+  // Render message text with simple **bold** markdown support and preserve newlines.
+  const renderFormattedContent = (text?: string) => {
+    if (!text) return null;
+    const parts: React.ReactNode[] = [];
+    const re = /\*\*(.+?)\*\*/g;
+    let lastIndex = 0;
+    let match: RegExpExecArray | null;
+    while ((match = re.exec(text)) !== null) {
+      const idx = match.index;
+      if (idx > lastIndex) {
+        parts.push(text.slice(lastIndex, idx));
+      }
+      parts.push(<strong key={idx}>{match[1]}</strong>);
+      lastIndex = idx + match[0].length;
+    }
+    if (lastIndex < text.length) parts.push(text.slice(lastIndex));
+
+    // Convert strings with newlines into fragments with <br />
+    const nodes: React.ReactNode[] = [];
+    parts.forEach((p, i) => {
+      if (typeof p === "string") {
+        const lines = p.split("\n");
+        lines.forEach((line, j) => {
+          nodes.push(
+            <React.Fragment key={`${i}-${j}`}>
+              {line}
+              {j < lines.length - 1 ? <br /> : null}
+            </React.Fragment>
+          );
+        });
+      } else {
+        nodes.push(
+          React.cloneElement(p as React.ReactElement, { key: `node-${i}` })
+        );
+      }
+    });
+
+    return <p className="text-sm leading-relaxed">{nodes}</p>;
+  };
+
   return (
     <>
       {/* Chat Button */}
@@ -568,9 +608,7 @@ export function ChatBot({ className = "" }: ChatBotProps) {
                                 : "glass-dark text-white rounded-bl-lg"
                             }`}
                           >
-                            <p className="text-sm leading-relaxed">
-                              {message.content}
-                            </p>
+                            {renderFormattedContent(message.content)}
 
                             {/* Suggestions */}
                             {message.suggestions && (
