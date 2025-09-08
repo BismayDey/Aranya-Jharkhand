@@ -1,5 +1,5 @@
 import { motion } from "motion/react";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { TourismMap } from "../components/TourismMap";
@@ -110,12 +110,70 @@ export function Destinations() {
   );
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [viewMode, setViewMode] = useState<"map" | "grid">("map");
+  const [page, setPage] = useState(0);
+  const pageSize = 4;
   const navigate = useNavigate();
+  const listRef = useRef<HTMLDivElement | null>(null);
 
   const filteredDestinations =
     selectedCategory === "all"
       ? destinations
       : destinations.filter((dest) => dest.category === selectedCategory);
+
+  // Reset to first page when category or filtered results change
+  useEffect(() => {
+    setPage(0);
+  }, [selectedCategory]);
+
+  // Smoothly scroll the list into view when the page changes
+  useEffect(() => {
+    if (
+      listRef.current &&
+      typeof listRef.current.scrollIntoView === "function"
+    ) {
+      try {
+        listRef.current.scrollIntoView({
+          behavior: "smooth",
+          block: "nearest",
+        });
+      } catch (e) {
+        // fallback: no-op
+      }
+    }
+  }, [page]);
+
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredDestinations.length / pageSize)
+  );
+  const pagedDestinations = filteredDestinations.slice(
+    page * pageSize,
+    page * pageSize + pageSize
+  );
+
+  // Motion variants for smooth, buttery transitions
+  const containerVariants = {
+    hidden: { opacity: 0, x: 28 },
+    show: {
+      opacity: 1,
+      x: 0,
+      transition: {
+        duration: 0.56,
+        ease: [0.22, 1, 0.36, 1],
+        when: "beforeChildren",
+        staggerChildren: 0.06,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 10 },
+    show: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.46, ease: [0.22, 1, 0.36, 1] },
+    },
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-black via-slate-900 to-black pt-24 pb-20">
@@ -221,73 +279,246 @@ export function Destinations() {
               />
             </motion.div>
 
-            {/* Destination List */}
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-              className="space-y-6"
-            >
-              {filteredDestinations.map((destination, index) => (
-                <motion.div
-                  key={destination.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.6 + index * 0.1, duration: 0.5 }}
-                  whileHover={{ scale: 1.02 }}
-                  className={`glass rounded-2xl p-6 cursor-pointer transition-all duration-300 ${
-                    activeDestination === destination.id
-                      ? "ring-2 ring-[#18B668]"
-                      : ""
-                  }`}
-                  onMouseEnter={() => setActiveDestination(destination.id)}
-                  onMouseLeave={() => setActiveDestination(null)}
-                  onClick={() =>
-                    destination.route !== "#" && navigate(destination.route)
-                  }
-                >
-                  <div className="flex gap-4">
-                    <div className="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0">
-                      <ImageWithFallback
-                        src={destination.image}
-                        alt={destination.name}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-start justify-between mb-2">
-                        <h3 className="text-white text-xl font-semibold">
-                          {destination.name}
-                        </h3>
-                        <div className="flex items-center gap-1">
-                          <span className="text-yellow-400">⭐</span>
-                          <span className="text-white text-sm">
-                            {destination.rating}
-                          </span>
+            {/* Destination List with pagination controls */}
+            <div className="relative">
+              <motion.div
+                // key the container to animate when page changes
+                key={page}
+                initial="hidden"
+                animate="show"
+                variants={containerVariants}
+                className="space-y-6"
+                ref={/* @ts-ignore */ (el) => (listRef.current = el)}
+              >
+                {pagedDestinations.map((destination, index) => (
+                  <motion.div
+                    key={destination.id}
+                    variants={itemVariants}
+                    whileHover={{ scale: 1.02 }}
+                    className={`glass rounded-2xl p-6 cursor-pointer transition-all duration-300 ${
+                      activeDestination === destination.id
+                        ? "ring-2 ring-[#18B668]"
+                        : ""
+                    }`}
+                    onMouseEnter={() => setActiveDestination(destination.id)}
+                    onMouseLeave={() => setActiveDestination(null)}
+                    onClick={() =>
+                      destination.route !== "#" && navigate(destination.route)
+                    }
+                  >
+                    <div className="flex gap-4">
+                      <div className="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0">
+                        <ImageWithFallback
+                          src={destination.image}
+                          alt={destination.name}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-start justify-between mb-2">
+                          <h3 className="text-white text-xl font-semibold">
+                            {destination.name}
+                          </h3>
+                          <div className="flex items-center gap-1">
+                            <span className="text-yellow-400">⭐</span>
+                            <span className="text-white text-sm">
+                              {destination.rating}
+                            </span>
+                          </div>
+                        </div>
+                        <p className="text-gray-300 text-sm mb-3">
+                          {destination.description}
+                        </p>
+                        <div className="flex items-center gap-4 text-xs text-gray-400 mb-3">
+                          <span>📅 Best: {destination.bestTime}</span>
+                          <span>⏱️ Duration: {destination.duration}</span>
+                        </div>
+                        <div className="flex gap-2 flex-wrap">
+                          {destination.highlights.map((highlight, idx) => (
+                            <span
+                              key={idx}
+                              className="px-3 py-1 bg-[#18B668]/20 text-[#18B668] text-xs rounded-full border border-[#18B668]/30"
+                            >
+                              {highlight}
+                            </span>
+                          ))}
                         </div>
                       </div>
-                      <p className="text-gray-300 text-sm mb-3">
-                        {destination.description}
-                      </p>
-                      <div className="flex items-center gap-4 text-xs text-gray-400 mb-3">
-                        <span>📅 Best: {destination.bestTime}</span>
-                        <span>⏱️ Duration: {destination.duration}</span>
-                      </div>
-                      <div className="flex gap-2 flex-wrap">
-                        {destination.highlights.map((highlight, idx) => (
-                          <span
-                            key={idx}
-                            className="px-3 py-1 bg-[#18B668]/20 text-[#18B668] text-xs rounded-full border border-[#18B668]/30"
-                          >
-                            {highlight}
-                          </span>
-                        ))}
-                      </div>
                     </div>
+                  </motion.div>
+                ))}
+              </motion.div>
+
+              {/* Pagination controls: vertical on the right */}
+              {totalPages > 1 && (
+                <>
+                  {/* Desktop / tablet: vertical controls positioned outside the list to the right */}
+                  <div
+                    className="absolute top-1/2 -translate-y-1/2 hidden sm:flex flex-col items-center gap-4 pr-8 md:pr-10 lg:pr-14"
+                    // push controls well outside the list/cards to the right
+                    style={{ right: "-140px" }}
+                  >
+                    <motion.button
+                      initial={{ scale: 0.95, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 180,
+                        damping: 24,
+                      }}
+                      whileHover={{ scale: 1.06 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => setPage((p) => Math.max(0, p - 1))}
+                      disabled={page <= 0}
+                      aria-label="Previous page"
+                      title="Previous"
+                      className={`w-12 h-12 flex items-center justify-center rounded-full text-white shadow-xl transition-colors duration-200 transform-gpu ${
+                        page <= 0
+                          ? "opacity-40 bg-black/25 cursor-not-allowed"
+                          : "bg-[#18B668] hover:bg-[#13a350]"
+                      }`}
+                    >
+                      {/* Chevron Up SVG (Lucide-like) */}
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="text-white"
+                      >
+                        <polyline points="18 15 12 9 6 15" />
+                      </svg>
+                    </motion.button>
+
+                    <motion.div
+                      key={page}
+                      initial={{ y: -6, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 160,
+                        damping: 22,
+                      }}
+                      className="text-xs text-gray-200 bg-black/50 px-3 py-1 rounded-full border border-white/10 backdrop-blur-sm"
+                    >
+                      {page + 1}/{totalPages}
+                    </motion.div>
+
+                    <motion.button
+                      initial={{ scale: 0.95, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 180,
+                        damping: 24,
+                        delay: 0.05,
+                      }}
+                      whileHover={{ scale: 1.06 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() =>
+                        setPage((p) => Math.min(totalPages - 1, p + 1))
+                      }
+                      disabled={page >= totalPages - 1}
+                      aria-label="Next page"
+                      title="Next"
+                      className={`w-12 h-12 flex items-center justify-center rounded-full text-white shadow-xl transition-colors duration-200 transform-gpu ${
+                        page >= totalPages - 1
+                          ? "opacity-40 bg-black/25 cursor-not-allowed"
+                          : "bg-[#18B668] hover:bg-[#13a350]"
+                      }`}
+                    >
+                      {/* Chevron Down SVG (Lucide-like) */}
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="text-white"
+                      >
+                        <polyline points="6 9 12 15 18 9" />
+                      </svg>
+                    </motion.button>
                   </div>
-                </motion.div>
-              ))}
-            </motion.div>
+
+                  {/* Small screens: horizontal controls below the list to avoid overlap */}
+                  <div className="sm:hidden mt-4 flex items-center justify-center gap-4">
+                    <motion.button
+                      whileHover={{ scale: 1.04 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => setPage((p) => Math.max(0, p - 1))}
+                      disabled={page <= 0}
+                      aria-label="Previous page"
+                      title="Previous"
+                      className={`px-3 py-2 rounded-lg text-white transition-colors duration-150 transform-gpu ${
+                        page <= 0
+                          ? "opacity-50 bg-black/20 cursor-not-allowed"
+                          : "bg-[#18B668] hover:bg-[#13a350]"
+                      }`}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="inline-block align-middle"
+                      >
+                        <polyline points="18 15 12 9 6 15" />
+                      </svg>
+                    </motion.button>
+
+                    <div className="text-sm text-gray-200">
+                      {page + 1}/{totalPages}
+                    </div>
+
+                    <motion.button
+                      whileHover={{ scale: 1.04 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() =>
+                        setPage((p) => Math.min(totalPages - 1, p + 1))
+                      }
+                      disabled={page >= totalPages - 1}
+                      aria-label="Next page"
+                      title="Next"
+                      className={`px-3 py-2 rounded-lg text-white transition-colors duration-150 transform-gpu ${
+                        page >= totalPages - 1
+                          ? "opacity-50 bg-black/20 cursor-not-allowed"
+                          : "bg-[#18B668] hover:bg-[#13a350]"
+                      }`}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="inline-block align-middle"
+                      >
+                        <polyline points="6 9 12 15 18 9" />
+                      </svg>
+                    </motion.button>
+                  </div>
+                </>
+              )}
+            </div>
           </div>
         )}
 
