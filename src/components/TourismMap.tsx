@@ -323,7 +323,7 @@ export function TourismMap({
 
   return (
     <div
-      className={`relative w-full rounded-2xl overflow-hidden ring-1 ring-white/10 ${textColorClass}`}
+      className={`relative w-full rounded-2xl overflow-hidden ring-1 ring-white/10 bg-white ${textColorClass}`}
       style={{ height }}
     >
       <Map
@@ -331,7 +331,7 @@ export function TourismMap({
         mapLib={maplibregl}
         initialViewState={mapCenter}
         mapStyle={baseMapStyle as any}
-        style={{ width: "100%", height: "100%" }}
+        style={{ width: "100%", height: "100%", background: "#ffffff" }}
         attributionControl={false}
         interactive={interactive}
       >
@@ -516,8 +516,8 @@ export function TourismMap({
           animate={{ opacity: 1, y: 0 }}
           className="absolute bottom-4 right-4 z-20"
         >
-          <div className="glass rounded-xl p-4">
-            <h4 className="text-white font-bold text-sm mb-3">
+          <div className="bg-white rounded-xl p-4 shadow-md border border-gray-200">
+            <h4 className="text-black font-bold text-sm mb-3">
               Destination Types
             </h4>
             <div className="space-y-2">
@@ -529,7 +529,7 @@ export function TourismMap({
               ].map((item) => (
                 <div key={item.type} className="flex items-center gap-2">
                   <span className="text-sm">{item.icon}</span>
-                  <span className="text-xs text-white">{item.label}</span>
+                  <span className="text-xs text-black">{item.label}</span>
                 </div>
               ))}
             </div>
