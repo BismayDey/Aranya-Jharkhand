@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
-import { motion } from "motion/react";
-import { Card, CardContent } from "../../components/ui/card";
-import { Button } from "../../components/ui/button";
-import { Badge } from "../../components/ui/badge";
-import { ImageWithFallback } from "../../components/figma/ImageWithFallback";
+import React, { useEffect, useState } from "react";
+import { DestinationData } from "../data/destinationsData";
+import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { useNavigate } from "react-router-dom";
+import { motion } from "motion/react";
+import { Card, CardContent } from "./ui/card";
+import { Button } from "./ui/button";
+import { Badge } from "./ui/badge";
 import {
   ArrowLeft,
   MapPin,
@@ -12,85 +13,40 @@ import {
   Calendar,
   Star,
   Camera,
-  Users,
   Thermometer,
   Mountain,
   TreePine,
-  Binoculars,
+  Waves,
   Heart,
   Share2,
   Navigation,
   Info,
 } from "lucide-react";
 
-const destination = {
-  id: "betla-national-park",
-  name: "Betla National Park",
-  tagline: "Wildlife & Forest Reserve",
-  description:
-    "Betla National Park, part of the Palamau Tiger Reserve, is a pristine wilderness area home to tigers, elephants, leopards, and over 170 bird species. It offers exceptional wildlife viewing and forest experiences.",
-  heroImage:
-    "https://images.unsplash.com/photo-1734373810483-af9b277b4bed?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmb3Jlc3QlMjB3aWxkbGlmZSUyMHNhZmFyaXxlbnwxfHx8fDE3NTY1NDI3OTh8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-  gallery: [
-    "https://images.unsplash.com/photo-1734373810483-af9b277b4bed?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmb3Jlc3QlMjB3aWxkbGlmZSUyMHNhZmFyaXxlbnwxfHx8fDE3NTY1NDI3OTh8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-    "https://images.unsplash.com/photo-1727891729717-d5ab6a060b01?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxkZW5zZSUyMGZvcmVzdCUyMHdpbGRsaWZlJTIwbmF0dXJlfGVufDF8fHx8MTc1NjU0MjA1OXww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-  ],
-  rating: 4.7,
-  reviews: 189,
-  location: "Latehar District, Jharkhand",
-  bestTime: "November to April",
-  duration: "2-3 days",
-  difficulty: "Easy to Moderate",
-  elevation: "300-600m",
-  temperature: "15-35°C",
-  highlights: [
-    {
-      icon: Binoculars,
-      title: "Tiger Safari",
-      description: "One of the best places to spot tigers in Jharkhand",
-    },
-    {
-      icon: TreePine,
-      title: "Dense Forests",
-      description: "Pristine sal and bamboo forests",
-    },
-    {
-      icon: Users,
-      title: "Bird Watching",
-      description: "Over 170 species of birds",
-    },
-    {
-      icon: Camera,
-      title: "Wildlife Photography",
-      description: "Excellent opportunities for wildlife shots",
-    },
-  ],
-  activities: [
-    "Tiger Safari",
-    "Elephant Safari",
-    "Bird Watching",
-    "Wildlife Photography",
-    "Nature Walks",
-    "Forest Camping",
-  ],
-  nearbyAttractions: [
-    { name: "Netarhat Hill Station", distance: "25km", type: "Hill Station" },
-    { name: "Palamau Fort", distance: "20km", type: "Historical" },
-    { name: "Lodh Falls", distance: "60km", type: "Waterfall" },
-  ],
-  tips: [
-    "Book safari permits in advance",
-    "Carry binoculars for better wildlife viewing",
-    "Early morning safaris have better tiger sighting chances",
-    "Maintain silence during safari",
-    "Follow park rules and guide instructions",
-  ],
+type Props = {
+  dest: DestinationData & Record<string, any>;
 };
 
-export function BetlaNationalPark() {
+function getIconForHighlight(title: string) {
+  const t = title.toLowerCase();
+  if (t.includes("water") || t.includes("fall")) return Waves;
+  if (t.includes("photo") || t.includes("camera")) return Camera;
+  if (t.includes("trek") || t.includes("trail") || t.includes("mount"))
+    return Mountain;
+  if (
+    t.includes("pool") ||
+    t.includes("tree") ||
+    t.includes("forest") ||
+    t.includes("nature")
+  )
+    return TreePine;
+  return Camera;
+}
+
+export default function DestinationFull({ dest }: Props) {
+  const navigate = useNavigate();
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [scrollY, setScrollY] = useState(0);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY);
@@ -98,12 +54,45 @@ export function BetlaNationalPark() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const handleBack = () => {
-    navigate("/destinations");
-  };
+  // normalize fields from dest with sensible defaults
+  const heroImage = dest.heroImage || dest.image || "";
+  const gallery: string[] =
+    dest.gallery && dest.gallery.length
+      ? dest.gallery
+      : [dest.image || heroImage];
+  const tagline = dest.tagline || dest.name;
+  const reviews = dest.reviews ?? Math.round((dest.rating || 4) * 40);
+  const location = dest.location || dest.name;
+  const elevation = dest.elevation || dest.elevation || "";
+  const temperature = dest.temperature || "";
+  const activities: string[] =
+    (dest.activities as any[]) ||
+    (Array.isArray(dest.highlights)
+      ? (dest.highlights as any[]).map((h: any) =>
+          typeof h === "string" ? h : h.title
+        )
+      : []);
+  const nearbyAttractions = dest.nearbyAttractions || [];
+  const tips: string[] = dest.tips || [
+    "Check weather and plan accordingly.",
+    "Carry water and snacks for day trips.",
+    "Respect local guidelines and signage.",
+  ];
+
+  const highlights = Array.isArray(dest.highlights)
+    ? (dest.highlights as any[]).map((h: any) =>
+        typeof h === "string"
+          ? { title: h, description: "", icon: getIconForHighlight(h) }
+          : {
+              title: h.title,
+              description: h.description,
+              icon: h.icon || getIconForHighlight(h.title),
+            }
+      )
+    : [];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background text-white">
       {/* Hero Section */}
       <section className="relative h-screen overflow-hidden">
         <div
@@ -111,8 +100,8 @@ export function BetlaNationalPark() {
           style={{ transform: `translateY(${scrollY * 0.5}px)` }}
         >
           <ImageWithFallback
-            src={destination.heroImage}
-            alt={destination.name}
+            src={heroImage}
+            alt={dest.name}
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-black/50" />
@@ -122,7 +111,7 @@ export function BetlaNationalPark() {
         <motion.button
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
-          onClick={handleBack}
+          onClick={() => navigate("/destinations")}
           className="absolute top-24 left-4 z-20 glass text-white p-3 rounded-full hover:bg-white/20 transition-all duration-300"
         >
           <ArrowLeft className="h-6 w-6" />
@@ -142,7 +131,7 @@ export function BetlaNationalPark() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, delay: 0.7 }}
             >
-              {destination.name}
+              {dest.name}
             </motion.h1>
 
             <motion.p
@@ -151,7 +140,7 @@ export function BetlaNationalPark() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, delay: 0.9 }}
             >
-              {destination.tagline}
+              {tagline}
             </motion.p>
 
             <motion.div
@@ -162,12 +151,12 @@ export function BetlaNationalPark() {
             >
               <div className="flex items-center gap-2">
                 <Star className="h-5 w-5 text-amber-400" />
-                <span>{destination.rating}</span>
-                <span>({destination.reviews} reviews)</span>
+                <span>{dest.rating}</span>
+                <span>({reviews} reviews)</span>
               </div>
               <div className="flex items-center gap-2">
                 <MapPin className="h-5 w-5" />
-                <span>{destination.location}</span>
+                <span>{location}</span>
               </div>
             </motion.div>
 
@@ -182,7 +171,7 @@ export function BetlaNationalPark() {
                 className="bg-[#18B668] hover:bg-[#18B668]/80 text-white px-8"
               >
                 <Calendar className="mr-2 h-5 w-5" />
-                Book Safari
+                Book Experience
               </Button>
               <Button
                 size="lg"
@@ -225,19 +214,19 @@ export function BetlaNationalPark() {
           <div className="flex flex-wrap justify-center gap-8 text-center">
             <div className="flex items-center gap-2 text-white">
               <Clock className="h-5 w-5 text-[#18B668]" />
-              <span className="text-sm">{destination.duration}</span>
+              <span className="text-sm">{dest.duration}</span>
             </div>
             <div className="flex items-center gap-2 text-white">
               <Calendar className="h-5 w-5 text-[#0EA5E9]" />
-              <span className="text-sm">{destination.bestTime}</span>
+              <span className="text-sm">{dest.bestTime}</span>
             </div>
             <div className="flex items-center gap-2 text-white">
               <Mountain className="h-5 w-5 text-[#F59E0B]" />
-              <span className="text-sm">{destination.elevation}</span>
+              <span className="text-sm">{elevation}</span>
             </div>
             <div className="flex items-center gap-2 text-white">
               <Thermometer className="h-5 w-5 text-[#8B4513]" />
-              <span className="text-sm">{destination.temperature}</span>
+              <span className="text-sm">{temperature}</span>
             </div>
           </div>
         </div>
@@ -254,10 +243,10 @@ export function BetlaNationalPark() {
               whileInView={{ opacity: 1, y: 0 }}
             >
               <h2 className="text-3xl font-bold text-white mb-6">
-                About {destination.name}
+                About {dest.name}
               </h2>
               <p className="text-white/80 leading-relaxed text-lg">
-                {destination.description}
+                {dest.description}
               </p>
             </motion.section>
 
@@ -270,7 +259,7 @@ export function BetlaNationalPark() {
                 What Makes It Special
               </h2>
               <div className="grid md:grid-cols-2 gap-6">
-                {destination.highlights.map((highlight, index) => (
+                {highlights.map((highlight, index) => (
                   <motion.div
                     key={index}
                     initial={{ opacity: 0, y: 20 }}
@@ -294,10 +283,10 @@ export function BetlaNationalPark() {
               whileInView={{ opacity: 1, y: 0 }}
             >
               <h2 className="text-3xl font-bold text-white mb-8">
-                Safari & Activities
+                Things To Do
               </h2>
               <div className="flex flex-wrap gap-3">
-                {destination.activities.map((activity, index) => (
+                {activities.map((activity, index) => (
                   <Badge
                     key={index}
                     variant="secondary"
@@ -314,11 +303,9 @@ export function BetlaNationalPark() {
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
             >
-              <h2 className="text-3xl font-bold text-white mb-8">
-                Wildlife Gallery
-              </h2>
+              <h2 className="text-3xl font-bold text-white mb-8">Gallery</h2>
               <div className="grid md:grid-cols-2 gap-4">
-                {destination.gallery.map((image, index) => (
+                {gallery.map((image, index) => (
                   <motion.div
                     key={index}
                     className="relative overflow-hidden rounded-xl cursor-pointer group"
@@ -327,7 +314,7 @@ export function BetlaNationalPark() {
                   >
                     <ImageWithFallback
                       src={image}
-                      alt={`${destination.name} gallery ${index + 1}`}
+                      alt={`${dest.name} gallery ${index + 1}`}
                       className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110"
                     />
                     <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors duration-300" />
@@ -350,19 +337,19 @@ export function BetlaNationalPark() {
               <Card className="glass sticky top-32">
                 <CardContent className="p-6">
                   <h3 className="text-xl font-bold text-white mb-4">
-                    Book Safari
+                    Plan Your Visit
                   </h3>
                   <div className="space-y-4">
                     <Button className="w-full bg-[#18B668] hover:bg-[#18B668]/80 text-white">
                       <Calendar className="mr-2 h-4 w-4" />
-                      Check Safari Slots
+                      Check Availability
                     </Button>
                     <Button
                       variant="outline"
                       className="w-full border-white/20 text-white hover:bg-white/10"
                     >
                       <Share2 className="mr-2 h-4 w-4" />
-                      Share Park Info
+                      Share Destination
                     </Button>
                     <Button
                       variant="outline"
@@ -385,28 +372,24 @@ export function BetlaNationalPark() {
               <Card className="glass">
                 <CardContent className="p-6">
                   <h3 className="text-lg font-bold text-white mb-4">
-                    Safari Info
+                    Quick Info
                   </h3>
                   <div className="space-y-3 text-sm">
                     <div className="flex justify-between">
                       <span className="text-white/70">Best Time:</span>
-                      <span className="text-white">{destination.bestTime}</span>
+                      <span className="text-white">{dest.bestTime}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-white/70">Duration:</span>
-                      <span className="text-white">{destination.duration}</span>
+                      <span className="text-white">{dest.duration}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-white/70">Difficulty:</span>
-                      <span className="text-white">
-                        {destination.difficulty}
-                      </span>
+                      <span className="text-white">{dest.difficulty}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-white/70">Temperature:</span>
-                      <span className="text-white">
-                        {destination.temperature}
-                      </span>
+                      <span className="text-white">{temperature}</span>
                     </div>
                   </div>
                 </CardContent>
@@ -425,7 +408,7 @@ export function BetlaNationalPark() {
                     Nearby Attractions
                   </h3>
                   <div className="space-y-3">
-                    {destination.nearbyAttractions.map((attraction, index) => (
+                    {nearbyAttractions.map((attraction: any, index: number) => (
                       <div
                         key={index}
                         className="flex justify-between items-center"
@@ -460,10 +443,10 @@ export function BetlaNationalPark() {
           className="mt-16"
         >
           <h2 className="text-3xl font-bold text-white mb-8 text-center">
-            Safari Tips
+            Travel Tips
           </h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {destination.tips.map((tip, index) => (
+            {tips.map((tip, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 20 }}

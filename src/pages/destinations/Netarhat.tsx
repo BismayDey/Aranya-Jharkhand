@@ -1,3 +1,11 @@
+import DestinationFull from "../../components/DestinationFull";
+import destinationsData from "../../data/destinationsData";
+
+export default function NetarhatPage() {
+  const dest = destinationsData.find((d) => d.id === "netarhat");
+  if (!dest) return null;
+  return <DestinationFull dest={dest} />;
+}
 import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { Card, CardContent } from "../../components/ui/card";
@@ -124,7 +132,7 @@ export function Netarhat() {
   }, []);
 
   const handleBack = () => {
-    navigate('/destinations');
+    navigate("/destinations");
   };
 
   return (
@@ -205,15 +213,17 @@ export function Netarhat() {
               <Button
                 size="lg"
                 className="bg-[#18B668] hover:bg-[#18B668]/80 text-white px-8"
-                onClick={() => navigate('/booking', { 
-                  state: { 
-                    planTitle: `${destination.name} Experience`,
-                    destination: destination.name,
-                    duration: destination.duration,
-                    price: 8500,
-                    type: 'destination'
-                  } 
-                })}
+                onClick={() =>
+                  navigate("/booking", {
+                    state: {
+                      planTitle: `${destination.name} Experience`,
+                      destination: destination.name,
+                      duration: destination.duration,
+                      price: 8500,
+                      type: "destination",
+                    },
+                  })
+                }
               >
                 <Calendar className="mr-2 h-5 w-5" />
                 Book Experience
@@ -376,16 +386,19 @@ export function Netarhat() {
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
             >
-              <h2 className="text-3xl font-bold text-white mb-8">Location & Nearby Attractions</h2>
+              <h2 className="text-3xl font-bold text-white mb-8">
+                Location & Nearby Attractions
+              </h2>
               <div className="glass-premium rounded-2xl p-6">
-                <TourismMap 
+                <TourismMap
                   height="400px"
                   selectedDestination="netarhat"
                   showAllDestinations={true}
                 />
                 <div className="mt-4 text-center">
                   <p className="text-gray-400 text-sm">
-                    Interactive map showing Netarhat and nearby attractions in Jharkhand
+                    Interactive map showing Netarhat and nearby attractions in
+                    Jharkhand
                   </p>
                 </div>
               </div>
@@ -405,17 +418,19 @@ export function Netarhat() {
                     Plan Your Visit
                   </h3>
                   <div className="space-y-4">
-                    <Button 
+                    <Button
                       className="w-full bg-[#18B668] hover:bg-[#18B668]/80 text-white"
-                      onClick={() => navigate('/booking', { 
-                        state: { 
-                          planTitle: `${destination.name} Experience`,
-                          destination: destination.name,
-                          duration: destination.duration,
-                          price: 8500,
-                          type: 'destination'
-                        } 
-                      })}
+                      onClick={() =>
+                        navigate("/booking", {
+                          state: {
+                            planTitle: `${destination.name} Experience`,
+                            destination: destination.name,
+                            duration: destination.duration,
+                            price: 8500,
+                            type: "destination",
+                          },
+                        })
+                      }
                     >
                       <Calendar className="mr-2 h-4 w-4" />
                       Book Now - ₹8,500

@@ -29,6 +29,7 @@ import { HundruFalls } from "./pages/destinations/HundruFalls";
 import { BetlaNationalPark } from "./pages/destinations/BetlaNationalPark";
 import { Deoghar } from "./pages/destinations/Deoghar";
 import { PatratuValley } from "./pages/destinations/PatratuValley";
+import DestinationDetail from "./pages/destinations/DestinationDetail";
 import { CartProvider } from "./context/CartContext";
 import { AuthProvider } from "./context/AuthContext";
 import { useScrollToTop } from "./hooks/useScrollToTop";
@@ -67,6 +68,10 @@ export default function App() {
                 <Route
                   path="/destinations/patratu-valley"
                   element={<PatratuValley />}
+                />
+                <Route
+                  path="/destinations/:id"
+                  element={<DestinationDetail />}
                 />
                 <Route path="/culture" element={<Culture />} />
                 <Route path="/travel-planner" element={<TravelPlanner />} />

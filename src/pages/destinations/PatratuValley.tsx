@@ -23,7 +23,7 @@ import {
 } from "lucide-react";
 
 const destination = {
-  id: "patratu",
+  id: "patratu-valley",
   name: "Patratu Valley",
   tagline: "Valley of Enchantment",
   description:
@@ -98,7 +98,7 @@ export function PatratuValley() {
   }, []);
 
   const handleBack = () => {
-    navigate('/destinations');
+    navigate("/destinations");
   };
 
   return (
@@ -313,7 +313,9 @@ export function PatratuValley() {
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
             >
-              <h2 className="text-3xl font-bold text-white mb-8">Scenic Gallery</h2>
+              <h2 className="text-3xl font-bold text-white mb-8">
+                Scenic Gallery
+              </h2>
               <div className="grid md:grid-cols-2 gap-4">
                 {destination.gallery.map((image, index) => (
                   <motion.div

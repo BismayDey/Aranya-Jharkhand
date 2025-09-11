@@ -4,97 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { TourismMap } from "../components/TourismMap";
 
-const destinations = [
-  {
-    id: 1,
-    name: "Netarhat",
-    description:
-      "Queen of Chotanagpur, known for mesmerizing sunsets and misty mornings",
-    image:
-      "https://images.unsplash.com/photo-1596688382656-a341e7deeeb6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb3VudGFpbiUyMGxhbmRzY2FwZSUyMHNjZW5pYyUyMHZpZXd8ZW58MXx8fHwxNzU2NTU5OTM5fDA&ixlib=rb-4.1.0&q=80&w=1080",
-    position: { top: "25%", left: "30%" },
-    highlights: ["Hill Station", "Sunset Point", "Pine Forests"],
-    category: "nature",
-    rating: 4.8,
-    bestTime: "Oct - Mar",
-    duration: "2-3 days",
-    route: "/destinations/netarhat",
-  },
-  {
-    id: 2,
-    name: "Hundru Falls",
-    description:
-      "Spectacular 320-meter waterfall cascading through rocky terrain",
-    image:
-      "https://images.unsplash.com/photo-1735567065045-97ba386867ad?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3YXRlcmZhbGxzJTIwZm9yZXN0JTIwbmF0dXJlJTIwamhhcmtoYW5kfGVufDF8fHx8MTc1NjY3MjU5OXww&ixlib=rb-4.1.0&q=80&w=1080",
-    position: { top: "60%", left: "45%" },
-    highlights: ["Waterfall", "Trekking", "Photography"],
-    category: "adventure",
-    rating: 4.9,
-    bestTime: "Jun - Nov",
-    duration: "1-2 days",
-    route: "/destinations/hundru-falls",
-  },
-  {
-    id: 3,
-    name: "Betla National Park",
-    description:
-      "Rich wildlife sanctuary with tigers, elephants, and diverse flora",
-    image:
-      "https://images.unsplash.com/photo-1596688382656-a341e7deeeb6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHhtb3VudGFpbiUyMGxhbmRzY2FwZSUyMHNjZW5pYyUyMHZpZXd8ZW58MXx8fHwxNzU2NTU5OTM5fDA&ixlib=rb-4.1.0&q=80&w=1080",
-    position: { top: "40%", left: "20%" },
-    highlights: ["Wildlife", "Safari", "Conservation"],
-    category: "wildlife",
-    rating: 4.7,
-    bestTime: "Nov - Apr",
-    duration: "2-3 days",
-    route: "/destinations/betla-national-park",
-  },
-  {
-    id: 4,
-    name: "Deoghar",
-    description:
-      "Sacred temple town with spiritual significance and natural beauty",
-    image:
-      "https://images.unsplash.com/photo-1667115788157-72f063f2a7a3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx0ZW1wbGUlMjBhcmNoaXRlY3R1cmUlMjBoZXJpdGFnZXxlbnwxfHx8fDE3NTY2NzI2MDB8MA&ixlib=rb-4.1.0&q=80&w=1080",
-    position: { top: "20%", left: "65%" },
-    highlights: ["Temples", "Spirituality", "Heritage"],
-    category: "spiritual",
-    rating: 4.6,
-    bestTime: "Oct - Mar",
-    duration: "2-3 days",
-    route: "/destinations/deoghar",
-  },
-  {
-    id: 5,
-    name: "Patratu Valley",
-    description: "Serene valley with pristine lake surrounded by rolling hills",
-    image:
-      "https://images.unsplash.com/photo-1596688382656-a341e7deeeb6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb3VudGFpbiUyMGxhbmRzY2FwZSUyMHNjZW5pYyUyMHZpZXd8ZW58MXx8fHwxNzU2NTU5OTM5fDA&ixlib=rb-4.1.0&q=80&w=1080",
-    position: { top: "50%", left: "60%" },
-    highlights: ["Lake", "Boating", "Scenic Views"],
-    category: "nature",
-    rating: 4.5,
-    bestTime: "Sep - Mar",
-    duration: "1-2 days",
-    route: "/destinations/patratu-valley",
-  },
-  {
-    id: 6,
-    name: "Dassam Falls",
-    description:
-      "Beautiful multi-tiered waterfall perfect for picnics and photography",
-    image:
-      "https://images.unsplash.com/photo-1735567065045-97ba386867ad?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3YXRlcmZhbGxzJTIwZm9yZXN0JTIwbmF0dXJlJTIwamhhcmtoYW5kfGVufDF8fHx8MTc1NjY3MjU5OXww&ixlib=rb-4.1.0&q=80&w=1080",
-    position: { top: "70%", left: "35%" },
-    highlights: ["Waterfall", "Picnic Spot", "Photography"],
-    category: "adventure",
-    rating: 4.4,
-    bestTime: "Jul - Dec",
-    duration: "1 day",
-    route: "#",
-  },
-];
+import destinationsData from "../data/destinationsData";
 
 const categories = [
   { id: "all", name: "All Destinations", icon: "🗺️" },
@@ -117,8 +27,8 @@ export function Destinations() {
 
   const filteredDestinations =
     selectedCategory === "all"
-      ? destinations
-      : destinations.filter((dest) => dest.category === selectedCategory);
+      ? destinationsData
+      : destinationsData.filter((dest) => dest.category === selectedCategory);
 
   // Reset to first page when category or filtered results change
   useEffect(() => {
@@ -268,12 +178,12 @@ export function Destinations() {
                 category={selectedCategory}
                 textColorClass="text-white"
                 onDestinationSelect={(dest) => {
-                  // Map component uses id keys like netarhat etc; navigate if matching route
-                  const match = destinations.find((d) =>
+                  // Map component uses id keys like netarhat etc; navigate if matching route id
+                  const match = destinationsData.find((d) =>
                     dest.name.toLowerCase().includes(d.name.toLowerCase())
                   );
-                  if (match && match.route !== "#") {
-                    navigate(match.route);
+                  if (match) {
+                    navigate(`/destinations/${match.id}`);
                   }
                 }}
               />
@@ -302,9 +212,7 @@ export function Destinations() {
                     }`}
                     onMouseEnter={() => setActiveDestination(destination.id)}
                     onMouseLeave={() => setActiveDestination(null)}
-                    onClick={() =>
-                      destination.route !== "#" && navigate(destination.route)
-                    }
+                    onClick={() => navigate(`/destinations/${destination.id}`)}
                   >
                     <div className="flex gap-4">
                       <div className="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0">
@@ -583,7 +491,7 @@ export function Destinations() {
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                       onClick={() =>
-                        destination.route !== "#" && navigate(destination.route)
+                        navigate(`/destinations/${destination.id}`)
                       }
                       className="flex-1 py-2 bg-[#18B668] hover:bg-[#18B668]/80 text-white font-medium rounded-lg hover:shadow-lg transition-all duration-300"
                     >

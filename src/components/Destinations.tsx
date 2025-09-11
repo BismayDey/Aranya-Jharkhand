@@ -1,63 +1,40 @@
 import { motion } from "motion/react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
+import destinationsData from "../data/destinationsData";
 
-const destinations = [
-  {
-    id: 1,
-    name: "Netarhat",
-    description:
-      "Queen of Chotanagpur, known for mesmerizing sunsets and misty mornings",
-    image:
-      "https://images.unsplash.com/photo-1596688382656-a341e7deeeb6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb3VudGFpbiUyMGxhbmRzY2FwZSUyMHNjZW5pYyUyMHZpZXd8ZW58MXx8fHwxNzU2NTU5OTM5fDA&ixlib=rb-4.1.0&q=80&w=1080",
-    position: { top: "25%", left: "30%" },
-    highlights: ["Hill Station", "Sunset Point", "Pine Forests"],
-  },
-  {
-    id: 2,
-    name: "Hundru Falls",
-    description:
-      "Spectacular 98-meter waterfall cascading through rocky terrain",
-    image:
-      "https://images.unsplash.com/photo-1735567065045-97ba386867ad?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3YXRlcmZhbGxzJTIwZm9yZXN0JTIwbmF0dXJlJTIwamhhcmtoYW5kfGVufDF8fHx8MTc1NjY3MjU5OXww&ixlib=rb-4.1.0&q=80&w=1080",
-    position: { top: "60%", left: "45%" },
-    highlights: ["Waterfall", "Trekking", "Photography"],
-  },
-  {
-    id: 3,
-    name: "Betla National Park",
-    description:
-      "Rich wildlife sanctuary with tigers, elephants, and diverse flora",
-    image:
-      "https://images.unsplash.com/photo-1596688382656-a341e7deeeb6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb3VudGFpbiUyMGxhbmRzY2FwZSUyMHNjZW5pYyUyMHZpZXd8ZW58MXx8fHwxNzU2NTU5OTM5fDA&ixlib=rb-4.1.0&q=80&w=1080",
-    position: { top: "40%", left: "20%" },
-    highlights: ["Wildlife", "Safari", "Conservation"],
-  },
-  {
-    id: 4,
-    name: "Deoghar",
-    description:
-      "Sacred temple town with spiritual significance and natural beauty",
-    image:
-      "https://images.unsplash.com/photo-1667115788157-72f063f2a7a3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx0ZW1wbGUlMjBhcmNoaXRlY3R1cmUlMjBoZXJpdGFnZXxlbnwxfHx8fDE3NTY2NzI2MDB8MA&ixlib=rb-4.1.0&q=80&w=1080",
-    position: { top: "20%", left: "65%" },
-    highlights: ["Temples", "Spirituality", "Heritage"],
-  },
-  {
-    id: 5,
-    name: "Patratu Valley",
-    description: "Serene valley with pristine lake surrounded by rolling hills",
-    image:
-      "https://images.unsplash.com/photo-1596688382656-a341e7deeeb6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb3VudGFpbiUyMGxhbmRzY2FwZSUyMHNjZW5pYyUyMHZpZXd8ZW58MXx8fHwxNzU2NTU5OTM5fDA&ixlib=rb-4.1.0&q=80&w=1080",
-    position: { top: "50%", left: "60%" },
-    highlights: ["Lake", "Boating", "Scenic Views"],
-  },
-];
+// positions used for the small interactive mini-map in this component
+const positionMap: Record<string, { top: string; left: string }> = {
+  netarhat: { top: "25%", left: "30%" },
+  "hundru-falls": { top: "60%", left: "45%" },
+  "betla-national-park": { top: "40%", left: "20%" },
+  deoghar: { top: "20%", left: "65%" },
+  "patratu-valley": { top: "50%", left: "60%" },
+};
+
+const hotspots = [
+  "netarhat",
+  "hundru-falls",
+  "betla-national-park",
+  "deoghar",
+  "patratu-valley",
+]
+  .map((id) => {
+    const d = destinationsData.find((x) => x.id === id);
+    if (!d) return null;
+    return {
+      ...d,
+      position: positionMap[id] || { top: "50%", left: "50%" },
+    };
+  })
+  .filter(Boolean) as any[];
 
 export function Destinations() {
-  const [activeDestination, setActiveDestination] = useState<number | null>(
+  const [activeDestination, setActiveDestination] = useState<string | null>(
     null
   );
+  const navigate = useNavigate();
 
   return (
     <section className="min-h-screen bg-gradient-to-b from-slate-900 to-black py-20 px-4">
@@ -103,7 +80,7 @@ export function Destinations() {
               </div>
 
               {/* Destination Hotspots */}
-              {destinations.map((destination) => (
+              {hotspots.map((destination) => (
                 <motion.div
                   key={destination.id}
                   className="absolute w-6 h-6 cursor-pointer"
@@ -111,6 +88,7 @@ export function Destinations() {
                   whileHover={{ scale: 1.5 }}
                   onHoverStart={() => setActiveDestination(destination.id)}
                   onHoverEnd={() => setActiveDestination(null)}
+                  onClick={() => navigate(`/destinations/${destination.id}`)}
                 >
                   <div className="w-full h-full bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full animate-pulse-glow"></div>
                   <div className="absolute inset-0 bg-white/20 rounded-full animate-ping"></div>
@@ -154,7 +132,7 @@ export function Destinations() {
             viewport={{ once: true }}
             className="space-y-6"
           >
-            {destinations.map((destination, index) => (
+            {destinationsData.map((destination, index) => (
               <motion.div
                 key={destination.id}
                 initial={{ opacity: 0, y: 20 }}
@@ -169,6 +147,7 @@ export function Destinations() {
                 }`}
                 onMouseEnter={() => setActiveDestination(destination.id)}
                 onMouseLeave={() => setActiveDestination(null)}
+                onClick={() => navigate(`/destinations/${destination.id}`)}
               >
                 <div className="flex gap-4">
                   <div className="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0">

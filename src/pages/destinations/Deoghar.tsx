@@ -1,3 +1,11 @@
+import DestinationFull from "../../components/DestinationFull";
+import destinationsData from "../../data/destinationsData";
+
+export default function DeogharPage() {
+  const dest = destinationsData.find((d) => d.id === "deoghar");
+  if (!dest) return null;
+  return <DestinationFull dest={dest} />;
+}
 import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { Card, CardContent } from "../../components/ui/card";
@@ -98,7 +106,7 @@ export function Deoghar() {
   }, []);
 
   const handleBack = () => {
-    navigate('/destinations');
+    navigate("/destinations");
   };
 
   return (
@@ -313,7 +321,9 @@ export function Deoghar() {
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
             >
-              <h2 className="text-3xl font-bold text-white mb-8">Sacred Gallery</h2>
+              <h2 className="text-3xl font-bold text-white mb-8">
+                Sacred Gallery
+              </h2>
               <div className="grid md:grid-cols-2 gap-4">
                 {destination.gallery.map((image, index) => (
                   <motion.div

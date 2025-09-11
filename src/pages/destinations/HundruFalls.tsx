@@ -23,7 +23,7 @@ import {
 } from "lucide-react";
 
 const destination = {
-  id: "hundru",
+  id: "hundru-falls",
   name: "Hundru Falls",
   tagline: "Spectacular 320ft Waterfall",
   description:
@@ -98,7 +98,7 @@ export function HundruFalls() {
   }, []);
 
   const handleBack = () => {
-    navigate('/destinations');
+    navigate("/destinations");
   };
 
   return (

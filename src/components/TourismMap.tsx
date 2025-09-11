@@ -12,118 +12,9 @@ import Map, {
 import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 
-interface Destination {
-  id: string;
-  name: string;
-  coordinates: [number, number];
-  type: "nature" | "cultural" | "adventure" | "spiritual";
-  rating: number;
-  difficulty: "Easy" | "Moderate" | "Challenging";
-  highlights: string[];
-  description: string;
-  bestTime: string;
-  duration: string;
-  price: string;
-  image: string;
-}
+import destinationsData, { DestinationData } from "../data/destinationsData";
 
-const destinations: Destination[] = [
-  {
-    id: "netarhat",
-    name: "Netarhat - Queen of Chotanagpur",
-    coordinates: [84.2609, 23.467],
-    type: "nature",
-    rating: 4.8,
-    difficulty: "Moderate",
-    highlights: [
-      "Sunrise Point",
-      "Pine Forests",
-      "Magnolia Point",
-      "Tribal Villages",
-    ],
-    description:
-      'The "Queen of Chotanagpur" offers breathtaking sunrise views, dense pine forests, and serene natural beauty.',
-    bestTime: "October to March",
-    duration: "2-3 days",
-    price: "₹8,500",
-    image: "🌄",
-  },
-  {
-    id: "hundru-falls",
-    name: "Hundru Falls",
-    coordinates: [85.5897, 23.421],
-    type: "adventure",
-    rating: 4.6,
-    difficulty: "Challenging",
-    highlights: [
-      "320ft Waterfall",
-      "Rock Climbing",
-      "Trekking Trails",
-      "Photography",
-    ],
-    description:
-      "A spectacular 320-foot waterfall perfect for adventure enthusiasts and nature photographers.",
-    bestTime: "July to February",
-    duration: "1-2 days",
-    price: "₹4,500",
-    image: "💦",
-  },
-  {
-    id: "betla-national-park",
-    name: "Betla National Park",
-    coordinates: [84.1892, 23.8738],
-    type: "nature",
-    rating: 4.9,
-    difficulty: "Easy",
-    highlights: [
-      "Tiger Safari",
-      "Elephant Spotting",
-      "Bird Watching",
-      "Nature Trails",
-    ],
-    description:
-      "Home to Bengal tigers, Asian elephants, and diverse wildlife in pristine forest settings.",
-    bestTime: "November to May",
-    duration: "3-4 days",
-    price: "₹12,000",
-    image: "🐅",
-  },
-  {
-    id: "deoghar",
-    name: "Deoghar - Sacred Land",
-    coordinates: [86.6908, 24.4847],
-    type: "spiritual",
-    rating: 4.7,
-    difficulty: "Easy",
-    highlights: [
-      "Baidyanath Temple",
-      "Sacred Shravan Month",
-      "Spiritual Ceremonies",
-      "Cultural Heritage",
-    ],
-    description:
-      "One of the 12 Jyotirlingas, this sacred destination attracts millions of devotees annually.",
-    bestTime: "October to March",
-    duration: "2-3 days",
-    price: "₹6,000",
-    image: "🕉️",
-  },
-  {
-    id: "patratu-valley",
-    name: "Patratu Valley",
-    coordinates: [84.9294, 23.6693],
-    type: "adventure",
-    rating: 4.5,
-    difficulty: "Moderate",
-    highlights: ["Valley Views", "Boating", "Sunset Point", "Adventure Sports"],
-    description:
-      "A stunning valley offering panoramic views, water sports, and adventure activities.",
-    bestTime: "October to April",
-    duration: "1-2 days",
-    price: "₹5,500",
-    image: "🏞️",
-  },
-];
+type Destination = DestinationData & { type?: string };
 
 interface TourismMapProps {
   selectedDestination?: string;
@@ -166,7 +57,7 @@ export function TourismMap({
   );
 
   const displayDestinations = useMemo(() => {
-    let list = destinations;
+    let list = destinationsData as Destination[];
     if (category && category !== "all") {
       if (category === "wildlife") {
         list = list.filter((d) =>
@@ -232,7 +123,7 @@ export function TourismMap({
 
   useEffect(() => {
     if (selectedDestination) {
-      const dest = destinations.find((d) => d.id === selectedDestination);
+      const dest = destinationsData.find((d) => d.id === selectedDestination);
       if (dest) {
         setSelectedDest(dest);
         flyToDestination(dest);
@@ -280,11 +171,24 @@ export function TourismMap({
   }, []);
 
   // Fit bounds when category or search changes and nothing selected
+  // (moved below after displayDestinationsFiltered is declared)
+
+  const displayDestinationsFiltered = useMemo(() => {
+    const term = searchTerm.trim().toLowerCase();
+    if (!term) return displayDestinations;
+    return displayDestinations.filter(
+      (d) =>
+        d.name.toLowerCase().includes(term) ||
+        d.highlights.some((h) => h.toLowerCase().includes(term))
+    );
+  }, [displayDestinations, searchTerm]);
+
+  // Fit bounds when category or search changes and nothing selected
   useEffect(() => {
     if (!mapRef.current) return;
     if (selectedDest) return; // keep focus on selected
     const feats = displayDestinationsFiltered;
-    if (!feats.length) return;
+    if (!feats || feats.length === 0) return;
     if (feats.length === 1) {
       mapRef.current.flyTo({
         center: feats[0].coordinates as any,
@@ -309,17 +213,7 @@ export function TourismMap({
         { padding: 80, duration: 1000 }
       );
     } catch {}
-  }, [category, searchTerm]);
-
-  const displayDestinationsFiltered = useMemo(() => {
-    const term = searchTerm.trim().toLowerCase();
-    if (!term) return displayDestinations;
-    return displayDestinations.filter(
-      (d) =>
-        d.name.toLowerCase().includes(term) ||
-        d.highlights.some((h) => h.toLowerCase().includes(term))
-    );
-  }, [displayDestinations, searchTerm]);
+  }, [category, searchTerm, displayDestinationsFiltered, selectedDest]);
 
   return (
     <div
@@ -376,7 +270,7 @@ export function TourismMap({
         {hoveredDestination &&
           !selectedDest &&
           (() => {
-            const d = destinations.find((x) => x.id === hoveredDestination);
+            const d = destinationsData.find((x) => x.id === hoveredDestination);
             if (!d) return null;
             return (
               <Popup

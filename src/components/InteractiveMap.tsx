@@ -1,80 +1,30 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { motion } from 'motion/react';
+import React, { useEffect, useRef, useState } from "react";
+import { motion } from "motion/react";
+import destinationsData from "../data/destinationsData";
 
 // OpenStreetMap tile layer URL
-const OSM_TILE_URL = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+const OSM_TILE_URL = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
 
 // Jharkhand destinations with coordinates
-const destinations = [
-  {
-    id: 'ranchi',
-    name: 'Ranchi',
-    lat: 23.3441,
-    lng: 85.3096,
-    type: 'capital',
-    color: '#18B668',
-    description: 'Capital of Jharkhand known for its hills, lakes, and modern infrastructure.',
-    attractions: ['Rock Garden', 'Jagannath Temple', 'Hatia Lake']
-  },
-  {
-    id: 'netarhat',
-    name: 'Netarhat',
-    lat: 23.4667,
-    lng: 84.25,
-    type: 'hill_station',
-    color: '#F59E0B',
-    description: 'Queen of Chotanagpur - Famous for sunrise/sunset views, pine forests, and pleasant climate.',
-    attractions: ['Sunrise Point', 'Pine Forest', 'Upper Ghaghri Falls']
-  },
-  {
-    id: 'hundru-falls',
-    name: 'Hundru Falls',
-    lat: 23.4065,
-    lng: 85.5979,
-    type: 'waterfall',
-    color: '#0EA5E9',
-    description: '98-meter high waterfall formed by the Subarnarekha River.',
-    attractions: ['Waterfall Trek', 'Rock Climbing', 'Photography Points']
-  },
-  {
-    id: 'betla',
-    name: 'Betla National Park',
-    lat: 23.8833,
-    lng: 84.1833,
-    type: 'national_park',
-    color: '#10B981',
-    description: 'First tiger reserve in Jharkhand, home to diverse wildlife including tigers, elephants, and leopards.',
-    attractions: ['Tiger Safari', 'Elephant Spotting', 'Bird Watching']
-  },
-  {
-    id: 'deoghar',
-    name: 'Deoghar',
-    lat: 24.4833,
-    lng: 86.7,
-    type: 'religious',
-    color: '#F97316',
-    description: 'Baidyanath Dham - One of the 12 Jyotirlingas, major pilgrimage destination.',
-    attractions: ['Baidyanath Temple', 'Naulakha Mandir', 'Satsang Ashram']
-  },
-  {
-    id: 'patratu',
-    name: 'Patratu Valley',
-    lat: 23.2167,
-    lng: 85.1833,
-    type: 'valley',
-    color: '#8B5CF6',
-    description: 'Scenic valley with dam, boating facilities, and beautiful landscapes.',
-    attractions: ['Patratu Dam', 'Boating', 'Valley Views']
-  }
-];
+// Convert shared destinationsData into the simpler shape used by this mini-map
+const destinations = destinationsData.map((d) => ({
+  id: d.id,
+  name: d.name,
+  lat: d.coordinates ? d.coordinates[1] : 23.6,
+  lng: d.coordinates ? d.coordinates[0] : 85.5,
+  type: d.category || "place",
+  color: "#18B668",
+  description: d.description,
+  attractions: d.highlights || [],
+}));
 
 const typeIcons: { [key: string]: string } = {
-  capital: '🏛️',
-  hill_station: '🏔️',
-  waterfall: '💧',
-  national_park: '🦎',
-  religious: '🕉️',
-  valley: '🏞️'
+  capital: "🏛️",
+  hill_station: "🏔️",
+  waterfall: "💧",
+  national_park: "🦎",
+  religious: "🕉️",
+  valley: "🏞️",
 };
 
 interface InteractiveMapProps {
@@ -109,7 +59,7 @@ export function InteractiveMap({ onDestinationSelect }: InteractiveMapProps) {
       north: 25.5,
       south: 21.5,
       east: 88.5,
-      west: 83.5
+      west: 83.5,
     };
 
     const x = ((lng - bounds.west) / (bounds.east - bounds.west)) * 100;
@@ -131,10 +81,10 @@ export function InteractiveMap({ onDestinationSelect }: InteractiveMapProps) {
       )}
 
       {/* Map Container */}
-      <div 
+      <div
         ref={mapContainerRef}
         className={`relative w-full h-full bg-gradient-to-br from-slate-800 to-slate-900 transition-opacity duration-1000 ${
-          mapLoaded ? 'opacity-100' : 'opacity-0'
+          mapLoaded ? "opacity-100" : "opacity-0"
         }`}
       >
         {/* Background Map Pattern */}
@@ -149,7 +99,7 @@ export function InteractiveMap({ onDestinationSelect }: InteractiveMapProps) {
               strokeDasharray="8,4"
               className="animate-pulse"
             />
-            
+
             {/* District boundaries (simplified) */}
             <g stroke="#18B668" strokeWidth="1" opacity="0.3" fill="none">
               <path d="M200 200 L350 180 L400 250 L300 280 Z" />
@@ -163,7 +113,7 @@ export function InteractiveMap({ onDestinationSelect }: InteractiveMapProps) {
         {/* Destination Markers */}
         {destinations.map((destination) => {
           const position = getPositionOnMap(destination.lat, destination.lng);
-          
+
           return (
             <motion.div
               key={destination.id}
@@ -173,7 +123,7 @@ export function InteractiveMap({ onDestinationSelect }: InteractiveMapProps) {
               className="absolute cursor-pointer transform -translate-x-1/2 -translate-y-1/2 z-10"
               style={{
                 left: `${position.x}%`,
-                top: `${position.y}%`
+                top: `${position.y}%`,
               }}
               onClick={() => handleDestinationClick(destination)}
             >
@@ -201,8 +151,10 @@ export function InteractiveMap({ onDestinationSelect }: InteractiveMapProps) {
                 {/* Tooltip */}
                 <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-black/90 text-white text-xs rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
                   <div className="font-semibold">{destination.name}</div>
-                  <div className="text-gray-300 capitalize">{destination.type.replace('_', ' ')}</div>
-                  
+                  <div className="text-gray-300 capitalize">
+                    {destination.type.replace("_", " ")}
+                  </div>
+
                   {/* Tooltip Arrow */}
                   <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-black/90"></div>
                 </div>
@@ -223,12 +175,16 @@ export function InteractiveMap({ onDestinationSelect }: InteractiveMapProps) {
 
         {/* Map Legend */}
         <div className="absolute bottom-4 right-4 glass-dark rounded-lg p-4 max-w-xs">
-          <h4 className="text-white font-semibold mb-3 text-sm">Interactive Map</h4>
+          <h4 className="text-white font-semibold mb-3 text-sm">
+            Interactive Map
+          </h4>
           <div className="grid grid-cols-2 gap-2 text-xs">
             {Object.entries(typeIcons).map(([type, icon]) => (
               <div key={type} className="flex items-center gap-2">
                 <span>{icon}</span>
-                <span className="text-gray-300 capitalize">{type.replace('_', ' ')}</span>
+                <span className="text-gray-300 capitalize">
+                  {type.replace("_", " ")}
+                </span>
               </div>
             ))}
           </div>
@@ -257,7 +213,7 @@ export function InteractiveMap({ onDestinationSelect }: InteractiveMapProps) {
                 {typeIcons[selectedDestination.type]} {selectedDestination.name}
               </h3>
               <p className="text-gray-300 capitalize mb-4">
-                {selectedDestination.type.replace('_', ' ')}
+                {selectedDestination.type.replace("_", " ")}
               </p>
             </div>
             <button
@@ -275,18 +231,20 @@ export function InteractiveMap({ onDestinationSelect }: InteractiveMapProps) {
           <div>
             <h4 className="text-white font-semibold mb-3">Top Attractions</h4>
             <div className="grid gap-2">
-              {selectedDestination.attractions.map((attraction: string, index: number) => (
-                <div
-                  key={index}
-                  className="flex items-center gap-3 p-3 glass rounded-lg"
-                >
+              {selectedDestination.attractions.map(
+                (attraction: string, index: number) => (
                   <div
-                    className="w-3 h-3 rounded-full"
-                    style={{ backgroundColor: selectedDestination.color }}
-                  />
-                  <span className="text-white">{attraction}</span>
-                </div>
-              ))}
+                    key={index}
+                    className="flex items-center gap-3 p-3 glass rounded-lg"
+                  >
+                    <div
+                      className="w-3 h-3 rounded-full"
+                      style={{ backgroundColor: selectedDestination.color }}
+                    />
+                    <span className="text-white">{attraction}</span>
+                  </div>
+                )
+              )}
             </div>
           </div>
 
