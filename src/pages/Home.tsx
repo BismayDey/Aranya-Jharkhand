@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
-import { motion } from 'motion/react';
-import { Link } from 'react-router-dom';
-import { ImageWithFallback } from '../components/figma/ImageWithFallback';
-import useScrollToTop from '../hooks/useScrollToTop';
-import { Button } from '../components/ui/button';
-import { Card, CardContent } from '../components/ui/card';
-import { Badge } from '../components/ui/badge';
+import { motion } from "motion/react";
+import { Link } from "react-router-dom";
+import { ImageWithFallback } from "../components/figma/ImageWithFallback";
+import { useRef } from "react";
+import useScrollToTop from "../hooks/useScrollToTop";
+import { Button } from "../components/ui/button";
+import { Card, CardContent } from "../components/ui/card";
+import { Badge } from "../components/ui/badge";
 import {
   MapPin,
   Calendar,
@@ -23,8 +24,8 @@ import {
   Waves,
   Music,
   Shirt,
-  Coffee
-} from 'lucide-react';
+  Coffee,
+} from "lucide-react";
 
 export function Home() {
   useScrollToTop();
@@ -40,76 +41,110 @@ export function Home() {
     {
       name: "Netarhat",
       description: "Queen of Chotanagpur",
-      image: "https://images.unsplash.com/photo-1629977681408-e6e6876645c0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb3VudGFpbiUyMHN1bnJpc2UlMjBsYW5kc2NhcGV8ZW58MXx8fHwxNzU2NTA1MzQ5fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      image: "/Detinations/netarhat%201.jpg",
       rating: 4.8,
-      route: "/destinations/netarhat"
+      route: "/destinations/netarhat",
     },
     {
       name: "Hundru Falls",
       description: "320ft Spectacular Waterfall",
-      image: "https://images.unsplash.com/photo-1678914903641-5f59d34a85da?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3YXRlcmZhbGwlMjBmb3Jlc3QlMjBuYXR1cmUlMjBqaGFya2hhbmR8ZW58MXx8fHwxNzU2NTQyMDU3fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      image: "/Detinations/hundru%20falls%201.jpg",
       rating: 4.9,
-      route: "/destinations/hundru-falls"
+      route: "/destinations/hundru-falls",
     },
     {
       name: "Betla National Park",
       description: "Wildlife & Tiger Reserve",
-      image: "https://images.unsplash.com/photo-1734373810483-af9b277b4bed?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmb3Jlc3QlMjB3aWxkbGlmZSUyMHNhZmFyaXxlbnwxfHx8fDE3NTY1NDI3OTh8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      image: "/Detinations/dasami%20falls.jpg",
       rating: 4.7,
-      route: "/destinations/betla-national-park"
-    }
+      route: "/destinations/betla-national-park",
+    },
   ];
+
+  // Hero video playlist (files are in public/Hero video/)
+  const heroVideos = [
+    "/Hero%20video/hero%20section%201.mp4",
+    "/Hero%20video/hero%20section%202.mp4",
+    "/Hero%20video/hero%20section%203.mp4",
+    "/Hero%20video/hero%20section%204.mp4",
+    "/Hero%20video/hero%20section%205.mp4",
+    "/Hero%20video/Hero%20section%206.mp4",
+  ];
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const [videoIndex, setVideoIndex] = useState(0);
+
+  useEffect(() => {
+    // attempt to play when index changes (muted allows autoplay)
+    const v = videoRef.current;
+    if (v) {
+      v.play().catch(() => {
+        /* ignore play promise rejection */
+      });
+    }
+  }, [videoIndex]);
 
   const culturalHighlights = [
     {
       title: "Tribal Dance",
       description: "Traditional Santal & Oraon performances",
       icon: Music,
-      image: "https://images.unsplash.com/photo-1585563741139-4d488b8291c4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx0cmliYWwlMjBjdWx0dXJlJTIwZGFuY2UlMjBpbmRpYXxlbnwxfHx8fDE3NTY1NDIwNTh8MA&ixlib=rb-4.1.0&q=80&w=1080"
+      image:
+        "https://images.unsplash.com/photo-1585563741139-4d488b8291c4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx0cmliYWwlMjBjdWx0dXJlJTIwZGFuY2UlMjBpbmRpYXxlbnwxfHx8fDE3NTY1NDIwNTh8MA&ixlib=rb-4.1.0&q=80&w=1080",
     },
     {
       title: "Handloom Weaving",
       description: "Exquisite traditional textiles",
       icon: Shirt,
-      image: "https://images.unsplash.com/photo-1610070322384-4ce29b83db15?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx0cmFkaXRpb25hbCUyMGhhbmRsb29tJTIwd2VhdmluZyUyMGluZGlhfGVufDF8fHx8MTc1NjY3MjY0Nnww&ixlib=rb-4.1.0&q=80&w=1080"
+      image:
+        "https://images.unsplash.com/photo-1610070322384-4ce29b83db15?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx0cmFkaXRpb25hbCUyMGhhbmRsb29tJTIwd2VhdmluZyUyMGluZGlhfGVufDF8fHx8MTc1NjY3MjY0Nnww&ixlib=rb-4.1.0&q=80&w=1080",
     },
     {
       title: "Local Cuisine",
       description: "Authentic tribal delicacies",
       icon: Coffee,
-      image: "https://images.unsplash.com/photo-1596688382656-a341e7deeeb6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb3VudGFpbiUyMGxhbmRzY2FwZSUyMHNjZW5pYyUyMHZpZXd8ZW58MXx8fHwxNzU2NTU5OTM5fDA&ixlib=rb-4.1.0&q=80&w=1080"
-    }
+      image:
+        "https://images.unsplash.com/photo-1596688382656-a341e7deeeb6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb3VudGFpbiUyMGxhbmRzY2FwZSUyMHNjZW5pYyUyMHZpZXd8ZW58MXx8fHwxNzU2NTU5OTM5fDA&ixlib=rb-4.1.0&q=80&w=1080",
+    },
   ];
 
   const marketplaceFeatures = [
     {
       category: "Handcrafts",
       items: "Traditional pottery & wood carvings",
-      artisans: "50+ Local Artisans"
+      artisans: "50+ Local Artisans",
     },
     {
-      category: "Textiles", 
+      category: "Textiles",
       items: "Handwoven sarees & fabrics",
-      artisans: "30+ Weavers"
+      artisans: "30+ Weavers",
     },
     {
       category: "Jewelry",
       items: "Tribal silver ornaments",
-      artisans: "25+ Craftsmen"
-    }
+      artisans: "25+ Craftsmen",
+    },
   ];
 
   return (
     <div className="min-h-screen overflow-hidden">
       {/* Hero Section */}
       <section className="relative h-screen overflow-hidden">
-        {/* Background Image */}
-        <div className="absolute inset-0">
-          <ImageWithFallback
-            src="https://images.unsplash.com/photo-1735567065045-97ba386867ad?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3YXRlcmZhbGxzJTIwZm9yZXN0JTIwbmF0dXJlJTIwamhhcmtoYW5kfGVufDF8fHx8MTc1NjY3MjU5OXww&ixlib=rb-4.1.0&q=80&w=1080"
-            alt="Jharkhand Waterfalls"
+        {/* Background Video */}
+        <div className="absolute inset-0 overflow-hidden">
+          <video
+            key={videoIndex}
+            ref={videoRef}
+            src={heroVideos[videoIndex]}
             className="w-full h-full object-cover"
             style={{ transform: `translateY(${scrollY * 0.5}px)` }}
+            muted
+            autoPlay
+            playsInline
+            preload="auto"
+            controls={false}
+            onEnded={() =>
+              setVideoIndex((i: number) => (i + 1) % heroVideos.length)
+            }
           />
           <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-black/70"></div>
         </div>
@@ -146,11 +181,11 @@ export function Home() {
             <motion.div
               key={i}
               className={`absolute w-6 h-6 opacity-20 ${
-                i % 2 === 0 ? 'bg-[#18B668]' : 'bg-[#F59E0B]'
+                i % 2 === 0 ? "bg-[#18B668]" : "bg-[#F59E0B]"
               } rounded-full blur-sm`}
               style={{
-                top: `${20 + (i * 15)}%`,
-                left: `${10 + (i * 10)}%`,
+                top: `${20 + i * 15}%`,
+                left: `${10 + i * 10}%`,
               }}
               animate={{
                 y: [-10, 20, -10],
@@ -177,9 +212,7 @@ export function Home() {
               className="mb-8"
             >
               <h1 className="text-6xl md:text-8xl lg:text-9xl font-bold mb-6">
-                <span className="text-[#18B668]">
-                  Discover
-                </span>
+                <span className="text-[#18B668]">Discover</span>
                 <br />
                 <span className="text-white">Jharkhand</span>
               </h1>
@@ -274,29 +307,29 @@ export function Home() {
                 description: "Explore breathtaking landscapes and hidden gems",
                 icon: Mountain,
                 link: "/destinations",
-                color: "#18B668"
+                color: "#18B668",
               },
               {
                 title: "Culture & Heritage",
                 description: "Immerse in rich tribal traditions and art",
                 icon: Palette,
                 link: "/culture",
-                color: "#F59E0B"
+                color: "#F59E0B",
               },
               {
                 title: "Travel Planner",
                 description: "AI-powered personalized trip planning",
                 icon: Compass,
                 link: "/travel-planner",
-                color: "#0EA5E9"
+                color: "#0EA5E9",
               },
               {
                 title: "Artisan Marketplace",
                 description: "Shop authentic handicrafts from local artisans",
                 icon: ShoppingBag,
                 link: "/marketplace",
-                color: "#8B5CF6"
-              }
+                color: "#8B5CF6",
+              },
             ].map((item, index) => (
               <motion.div
                 key={item.title}
@@ -317,8 +350,12 @@ export function Home() {
                     >
                       <item.icon className="h-8 w-8 text-white" />
                     </motion.div>
-                    <h3 className="text-white font-bold text-xl mb-3">{item.title}</h3>
-                    <p className="text-gray-400 text-sm leading-relaxed">{item.description}</p>
+                    <h3 className="text-white font-bold text-xl mb-3">
+                      {item.title}
+                    </h3>
+                    <p className="text-gray-400 text-sm leading-relaxed">
+                      {item.description}
+                    </p>
                     <motion.div
                       initial={{ scaleX: 0 }}
                       whileInView={{ scaleX: 1 }}
@@ -374,11 +411,17 @@ export function Home() {
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
                     <div className="absolute top-4 right-4 flex items-center gap-1 glass-dark rounded-full px-3 py-1">
                       <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                      <span className="text-white text-sm">{destination.rating}</span>
+                      <span className="text-white text-sm">
+                        {destination.rating}
+                      </span>
                     </div>
                     <div className="absolute bottom-4 left-4 right-4">
-                      <h3 className="text-white text-2xl font-bold mb-1">{destination.name}</h3>
-                      <p className="text-gray-200 text-sm">{destination.description}</p>
+                      <h3 className="text-white text-2xl font-bold mb-1">
+                        {destination.name}
+                      </h3>
+                      <p className="text-gray-200 text-sm">
+                        {destination.description}
+                      </p>
                     </div>
                   </div>
                   <div className="p-6">
@@ -427,7 +470,8 @@ export function Home() {
               Rich <span className="text-[#F59E0B]">Culture</span> & Heritage
             </h2>
             <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-              Experience the vibrant traditions and artistic heritage of Jharkhand's tribal communities
+              Experience the vibrant traditions and artistic heritage of
+              Jharkhand's tribal communities
             </p>
           </motion.div>
 
@@ -453,7 +497,9 @@ export function Home() {
                   </div>
                 </div>
                 <div className="p-6">
-                  <h3 className="text-white text-xl font-bold mb-2">{item.title}</h3>
+                  <h3 className="text-white text-xl font-bold mb-2">
+                    {item.title}
+                  </h3>
                   <p className="text-gray-300 text-sm">{item.description}</p>
                 </div>
               </motion.div>
@@ -492,17 +538,19 @@ export function Home() {
               viewport={{ once: true }}
             >
               <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-                AI-Powered <span className="text-[#0EA5E9]">Travel Planner</span>
+                AI-Powered{" "}
+                <span className="text-[#0EA5E9]">Travel Planner</span>
               </h2>
               <p className="text-xl text-gray-300 mb-8 leading-relaxed">
-                Let our intelligent travel planner create the perfect itinerary based on your preferences, interests, and budget.
+                Let our intelligent travel planner create the perfect itinerary
+                based on your preferences, interests, and budget.
               </p>
               <div className="space-y-4 mb-8">
                 {[
                   "Personalized recommendations",
                   "Real-time weather updates",
                   "Local guide connections",
-                  "Budget optimization"
+                  "Budget optimization",
                 ].map((feature, index) => (
                   <motion.div
                     key={feature}
@@ -518,13 +566,16 @@ export function Home() {
                 ))}
               </div>
               <Link to="/travel-planner">
-                <Button size="lg" className="bg-[#0EA5E9] hover:bg-[#0EA5E9]/80 text-white">
+                <Button
+                  size="lg"
+                  className="bg-[#0EA5E9] hover:bg-[#0EA5E9]/80 text-white"
+                >
                   <Compass className="mr-2 h-5 w-5" />
                   Start Planning
                 </Button>
               </Link>
             </motion.div>
-            
+
             <motion.div
               initial={{ opacity: 0, x: 50 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -580,7 +631,8 @@ export function Home() {
               Artisan <span className="text-[#8B5CF6]">Marketplace</span>
             </h2>
             <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-              Support local artisans by purchasing authentic handcrafted items directly from the makers
+              Support local artisans by purchasing authentic handcrafted items
+              directly from the makers
             </p>
           </motion.div>
 
@@ -597,9 +649,14 @@ export function Home() {
                 <div className="w-16 h-16 bg-[#8B5CF6] rounded-2xl flex items-center justify-center mx-auto mb-4">
                   <ShoppingBag className="h-8 w-8 text-white" />
                 </div>
-                <h3 className="text-white text-xl font-bold mb-2">{category.category}</h3>
+                <h3 className="text-white text-xl font-bold mb-2">
+                  {category.category}
+                </h3>
                 <p className="text-gray-300 text-sm mb-4">{category.items}</p>
-                <Badge variant="outline" className="border-[#8B5CF6] text-[#8B5CF6]">
+                <Badge
+                  variant="outline"
+                  className="border-[#8B5CF6] text-[#8B5CF6]"
+                >
                   {category.artisans}
                 </Badge>
               </motion.div>

@@ -85,8 +85,10 @@ export function TourismMap({
         return "🏔️";
       case "spiritual":
         return "🕉️";
+      case "wildlife":
+        return "🦌";
       default:
-        return "📍";
+        return "🦌";
     }
   };
 
@@ -99,6 +101,8 @@ export function TourismMap({
       case "adventure":
         return "from-orange-400 to-red-500";
       case "spiritual":
+        return "from-yellow-400 to-orange-500";
+      case "wildlife":
         return "from-yellow-400 to-orange-500";
       default:
         return "from-blue-400 to-indigo-500";

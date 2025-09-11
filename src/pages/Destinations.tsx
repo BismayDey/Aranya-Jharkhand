@@ -61,6 +61,41 @@ export function Destinations() {
     page * pageSize + pageSize
   );
 
+  // Build prioritized candidates for images in `public/Detinations` (note the folder name)
+  const makeImageCandidates = (destination: any) => {
+    const remote = destination.image || "";
+    const idBase = destination.id;
+    const rawName = String(destination.name || "");
+    const baseName = rawName
+      .toLowerCase()
+      .replace(/[^\n+a-z0-9 ]/g, "")
+      .trim();
+
+    const variants = [
+      `${idBase}.jpg`,
+      `${idBase}.jpeg`,
+      `${idBase}.png`,
+      `${baseName}.jpg`,
+      `${baseName}.jpeg`,
+      `${baseName}.png`,
+      `${baseName} 1.jpg`,
+      `${baseName} 2.jpg`,
+      `${baseName.replace(/ /g, "-")}.jpg`,
+    ];
+
+    // map to public path and include encoded name forms as well
+    const candidates = variants
+      .map((fn) => `/Detinations/${fn}`)
+      .concat([
+        `/Detinations/${encodeURIComponent(rawName)}.jpg`,
+        `/Detinations/${encodeURIComponent(rawName)}.jpeg`,
+        `/Detinations/${encodeURIComponent(rawName)}.png`,
+      ])
+      .concat([remote]);
+
+    return candidates.filter(Boolean);
+  };
+
   // Motion variants for smooth, buttery transitions
   const containerVariants = {
     hidden: { opacity: 0, x: 28 },
@@ -216,8 +251,9 @@ export function Destinations() {
                   >
                     <div className="flex gap-4">
                       <div className="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0">
+                        {/* Try images from public folder first (several name variations), then fall back to the remote `image` URL */}
                         <ImageWithFallback
-                          src={destination.image}
+                          sources={makeImageCandidates(destination)}
                           alt={destination.name}
                           className="w-full h-full object-cover"
                         />
@@ -449,7 +485,7 @@ export function Destinations() {
               >
                 <div className="relative h-48 overflow-hidden">
                   <ImageWithFallback
-                    src={destination.image}
+                    sources={makeImageCandidates(destination)}
                     alt={destination.name}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                   />
