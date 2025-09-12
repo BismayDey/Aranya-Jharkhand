@@ -14,6 +14,7 @@ import { Culture } from "./pages/Culture";
 import { TravelPlanner } from "./pages/TravelPlanner";
 import { TravelPlannerWithMap } from "./pages/TravelPlannerWithMap";
 import { Marketplace } from "./pages/Marketplace";
+import { Gallery } from "./pages/Gallery";
 import { Cart } from "./pages/Cart";
 import { Checkout } from "./pages/Checkout";
 import { Product } from "./pages/Product";
@@ -198,6 +199,7 @@ export default function App() {
                 />
                 <Route path="/culture" element={<Culture />} />
                 <Route path="/travel-planner" element={<TravelPlanner />} />
+                <Route path="/gallery" element={<Gallery />} />
                 <Route
                   path="/travel-planner-map"
                   element={<TravelPlannerWithMap />}
