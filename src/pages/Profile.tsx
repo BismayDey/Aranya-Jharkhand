@@ -15,8 +15,17 @@ export function Profile() {
       return;
     }
 
-    // Per request: always redirect to guest dashboard after auth
-    navigate("/guest-dashboard");
+    // Redirect to role-aware dashboard
+    const pathForUser = () => {
+      if (user.userType === "host") {
+        if (user.hostType === "vendor") return "/vendor-dashboard";
+        if (user.hostType === "hotel-owner") return "/hotel-dashboard";
+        return "/host-dashboard";
+      }
+      return "/guest-dashboard";
+    };
+
+    navigate(pathForUser());
   }, [user, navigate]);
 
   // Show loading while redirecting

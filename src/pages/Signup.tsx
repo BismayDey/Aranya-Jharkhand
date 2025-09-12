@@ -53,8 +53,17 @@ export const Signup = () => {
   // Redirect if user is already logged in
   useEffect(() => {
     if (user) {
-      // Per request: always redirect users to guest dashboard after auth
-      navigate("/guest-dashboard");
+      // Redirect to role-aware dashboard
+      const pathForUser = () => {
+        if (user.userType === "host") {
+          if (user.hostType === "vendor") return "/vendor-dashboard";
+          if (user.hostType === "hotel-owner") return "/hotel-dashboard";
+          return "/host-dashboard";
+        }
+        return "/guest-dashboard";
+      };
+
+      navigate(pathForUser());
     }
   }, [user, navigate]);
 
@@ -106,11 +115,13 @@ export const Signup = () => {
         duration: 3000,
       });
     } catch (err) {
-      const errorMessage = "Signup failed. Please try again.";
+      const e: any = err;
+      const errorMessage =
+        e?.code || e?.message || "Signup failed. Please try again.";
       setError(errorMessage);
       toast.error("Account Creation Failed", {
         description: errorMessage,
-        duration: 4000,
+        duration: 6000,
       });
     }
   };

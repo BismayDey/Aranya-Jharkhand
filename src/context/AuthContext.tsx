@@ -237,11 +237,21 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }) => {
     setIsLoading(true);
     try {
-      const cred = await createUserWithEmailAndPassword(
-        auth,
-        userData.email,
-        userData.password
-      );
+      let cred;
+      try {
+        cred = await createUserWithEmailAndPassword(
+          auth,
+          userData.email,
+          userData.password
+        );
+      } catch (err: any) {
+        console.error(
+          "Firebase signup failed:",
+          err?.code || err?.message || err
+        );
+        // rethrow so the UI layer can show an error
+        throw err;
+      }
       const uid = cred.user.uid;
       const docRef = doc(firestore, "users", uid);
       const payload: any = {

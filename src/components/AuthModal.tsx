@@ -107,10 +107,22 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
         description: `Redirecting to your ${selectedUserType} dashboard...`,
         duration: 3000,
       });
-      // Per request: always redirect users to guest dashboard after auth
+      // Redirect to role-aware dashboard
+      const getRedirectPath = (userType: UserType, hostType?: HostType) => {
+        if (userType === "host") {
+          if (hostType === "vendor") return "/vendor-dashboard";
+          if (hostType === "hotel-owner") return "/hotel-dashboard";
+          return "/host-dashboard";
+        }
+        return "/guest-dashboard";
+      };
+
       setTimeout(() => {
         try {
-          window.location.pathname = "/guest-dashboard";
+          window.location.pathname = getRedirectPath(
+            selectedUserType,
+            selectedUserType === "host" ? selectedHostType : undefined
+          );
         } finally {
           onClose();
         }
@@ -161,10 +173,22 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
           "Your account has been created successfully. Redirecting...",
         duration: 3000,
       });
-      // Per request: always redirect users to guest dashboard after signup
+      // Redirect to role-aware dashboard
+      const getRedirectPath = (userType: UserType, hostType?: HostType) => {
+        if (userType === "host") {
+          if (hostType === "vendor") return "/vendor-dashboard";
+          if (hostType === "hotel-owner") return "/hotel-dashboard";
+          return "/host-dashboard";
+        }
+        return "/guest-dashboard";
+      };
+
       setTimeout(() => {
         try {
-          window.location.pathname = "/guest-dashboard";
+          window.location.pathname = getRedirectPath(
+            selectedUserType,
+            selectedUserType === "host" ? selectedHostType : undefined
+          );
         } finally {
           onClose();
         }
