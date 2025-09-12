@@ -1,0 +1,43 @@
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Users collection: each user owns their doc at /users/{userId}
+    match /users/{userId} {
+      // Helper: is the caller an admin?
+      function isAdmin(uid) {
+        return request.auth != null
+          && get(/databases/$(database)/documents/users/$(uid)).data.isAdmin == true;
+      }
+
+      // Create: authenticated user can create their own doc and email must match auth token
+      allow create: if request.auth != null
+                    && request.auth.uid == userId
+                    && request.resource.data.email == request.auth.token.email;
+
+      // Read: only the owner (and optionally admins via custom rules) can read their doc
+      allow read: if request.auth != null && request.auth.uid == userId;
+
+      // Update:
+      // - Admins may update any user doc.
+      // - Regular users may update their own doc, but cannot:
+      //   - change 'isAdmin'
+      //   - change 'userType' or 'hostType' (role fields) — those require an admin.
+      allow update: if request.auth != null && (
+        isAdmin(request.auth.uid) ||
+        (
+          request.auth.uid == userId
+          && !('isAdmin' in request.resource.data) // cannot toggle admin
+          && (!('userType' in request.resource.data) || request.resource.data.userType == resource.data.userType)
+          && (!('hostType' in request.resource.data) || request.resource.data.hostType == resource.data.hostType)
+        )
+      );
+
+      // Deletion is disallowed from client-side (admin backend only)
+      allow delete: if false;
+    }
+
+    // Add any other collection rules below (tighten them to least privilege)
+  }
+}

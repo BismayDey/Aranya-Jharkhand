@@ -1,7 +1,7 @@
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import useScrollToTop from '../hooks/useScrollToTop';
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import useScrollToTop from "../hooks/useScrollToTop";
 
 export function Profile() {
   useScrollToTop();
@@ -11,16 +11,12 @@ export function Profile() {
   useEffect(() => {
     // If user is not logged in, redirect to home
     if (!user) {
-      navigate('/');
+      navigate("/");
       return;
     }
-    
-    // If user is logged in, redirect to appropriate dashboard
-    if (user.userType === 'host') {
-      navigate('/host-dashboard');
-    } else {
-      navigate('/guest-dashboard');
-    }
+
+    // Per request: always redirect to guest dashboard after auth
+    navigate("/guest-dashboard");
   }, [user, navigate]);
 
   // Show loading while redirecting
