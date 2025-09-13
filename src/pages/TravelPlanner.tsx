@@ -1676,9 +1676,7 @@ export function TravelPlanner() {
                     >
                       <option value="guided">Expert-Guided Journey</option>
                       <option value="self">Independent Exploration</option>
-                      <option value="custom">
-                        Signature Experience Experience
-                      </option>
+                      <option value="custom">Signature Experience</option>
                       <option value="luxury">Premium Adventure</option>
                     </select>
                   </div>
@@ -2096,14 +2094,25 @@ export function TravelPlanner() {
                             Key Destinations:
                           </span>
                           <div className="flex flex-wrap gap-2 mt-2">
-                            {plan.destinations.slice(0, 3).map((dest, idx) => (
-                              <span
-                                key={idx}
-                                className="text-xs px-3 py-1 bg-white/10 rounded-full text-gray-300"
-                              >
-                                �� {dest.name}
-                              </span>
-                            ))}
+                            {Array.from(
+                              new Set(plan.destinations.map((d) => d.name))
+                            )
+                              .slice(0, 3)
+                              .map((name, idx) => {
+                                const short =
+                                  name.length > 28
+                                    ? name.slice(0, 25) + "..."
+                                    : name;
+                                return (
+                                  <span
+                                    key={idx}
+                                    className="text-xs px-3 py-1 bg-white/10 rounded-full text-gray-300 flex items-center gap-2"
+                                  >
+                                    <span>📍</span>
+                                    {short}
+                                  </span>
+                                );
+                              })}
                           </div>
                         </div>
 
