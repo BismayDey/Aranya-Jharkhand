@@ -320,6 +320,19 @@ const generateSuperDetailedItinerary = (
     return Math.round(price);
   };
 
+  // Return a randomized budget between ₹15,000 and ₹20,000 based on user's selected budget tier
+  const getRandomBudgetForTier = (tier: string) => {
+    const ranges: Record<string, [number, number]> = {
+      budget: [15000, 16500],
+      standard: [16000, 18000],
+      premium: [17500, 19500],
+      luxury: [18500, 20000],
+    };
+    const [min, max] = ranges[tier as keyof typeof ranges] || [15000, 20000];
+    const val = Math.floor(Math.random() * (max - min + 1)) + min;
+    return val;
+  };
+
   const calculateTripDuration = () => {
     if (formData.startDate && formData.endDate) {
       const start = new Date(formData.startDate);
@@ -405,13 +418,7 @@ const generateSuperDetailedItinerary = (
           ],
         },
       ],
-      price: `₹${calculateDynamicPrice(
-        basePrice,
-        formData.groupSize,
-        formData.budget,
-        tripDuration,
-        1.5
-      ).toLocaleString()}`,
+      price: `₹${getRandomBudgetForTier(formData.budget).toLocaleString()}`,
       priceBreakdown: {
         accommodation: 35,
         transport: 15,
@@ -794,13 +801,7 @@ const generateSuperDetailedItinerary = (
           ],
         },
       ],
-      price: `₹${calculateDynamicPrice(
-        basePrice * 1.3,
-        formData.groupSize,
-        formData.budget,
-        Math.max(tripDuration, 8),
-        1.8
-      ).toLocaleString()}`,
+      price: `₹${getRandomBudgetForTier(formData.budget).toLocaleString()}`,
       priceBreakdown: {
         accommodation: 30,
         transport: 20,
@@ -1051,13 +1052,7 @@ const generateSuperDetailedItinerary = (
           ],
         },
       ],
-      price: `₹${calculateDynamicPrice(
-        basePrice * 1.8,
-        formData.groupSize,
-        formData.budget,
-        Math.max(tripDuration, 7),
-        2.2
-      ).toLocaleString()}`,
+      price: `₹${getRandomBudgetForTier(formData.budget).toLocaleString()}`,
       priceBreakdown: {
         accommodation: 25,
         transport: 15,

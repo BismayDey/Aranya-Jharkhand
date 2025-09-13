@@ -1,13 +1,13 @@
-import { motion } from 'motion/react';
-import { useState } from 'react';
+import { motion } from "motion/react";
+import { useState } from "react";
 
 const interests = [
-  { id: 'nature', label: 'Nature & Wildlife', icon: '🌿' },
-  { id: 'culture', label: 'Culture & Heritage', icon: '🎭' },
-  { id: 'adventure', label: 'Adventure Sports', icon: '🏔️' },
-  { id: 'spiritual', label: 'Spiritual Journey', icon: '🕉️' },
-  { id: 'photography', label: 'Photography', icon: '📸' },
-  { id: 'food', label: 'Local Cuisine', icon: '🍽️' }
+  { id: "nature", label: "Nature & Wildlife", icon: "🌿" },
+  { id: "culture", label: "Culture & Heritage", icon: "🎭" },
+  { id: "adventure", label: "Adventure Sports", icon: "🏔️" },
+  { id: "spiritual", label: "Spiritual Journey", icon: "🕉️" },
+  { id: "photography", label: "Photography", icon: "📸" },
+  { id: "food", label: "Local Cuisine", icon: "🍽️" },
 ];
 
 const sampleItineraries = [
@@ -17,7 +17,7 @@ const sampleItineraries = [
     destinations: ["Netarhat", "Hundru Falls", "Betla National Park"],
     highlights: ["Sunset viewing", "Waterfall trekking", "Wildlife safari"],
     duration: "5 Days / 4 Nights",
-    price: "₹15,000"
+    price: "₹15,000",
   },
   {
     id: 2,
@@ -25,7 +25,7 @@ const sampleItineraries = [
     destinations: ["Deoghar", "Dumka", "Hazaribagh"],
     highlights: ["Temple visits", "Tribal villages", "Handicraft workshops"],
     duration: "7 Days / 6 Nights",
-    price: "₹22,000"
+    price: "₹22,000",
   },
   {
     id: 3,
@@ -33,20 +33,20 @@ const sampleItineraries = [
     destinations: ["Patratu Valley", "Hundru Falls", "Rock Garden"],
     highlights: ["Water sports", "Rock climbing", "Paragliding"],
     duration: "4 Days / 3 Nights",
-    price: "₹18,000"
-  }
+    price: "₹18,000",
+  },
 ];
 
 export function TravelPlanner() {
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
-  const [startDate, setStartDate] = useState('');
-  const [duration, setDuration] = useState('');
+  const [startDate, setStartDate] = useState("");
+  const [duration, setDuration] = useState("");
   const [showItineraries, setShowItineraries] = useState(false);
 
   const toggleInterest = (interestId: string) => {
-    setSelectedInterests(prev => 
-      prev.includes(interestId) 
-        ? prev.filter(id => id !== interestId)
+    setSelectedInterests((prev) =>
+      prev.includes(interestId)
+        ? prev.filter((id) => id !== interestId)
         : [...prev, interestId]
     );
   };
@@ -73,7 +73,8 @@ export function TravelPlanner() {
             <span className="text-white"> Planner</span>
           </h2>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-            AI-powered personalized itinerary generation based on your preferences
+            AI-powered personalized itinerary generation based on your
+            preferences
           </p>
         </motion.div>
 
@@ -95,8 +96,12 @@ export function TravelPlanner() {
               <span className="text-xl">🤖</span>
             </motion.div>
             <div>
-              <h3 className="text-2xl font-bold text-white">AI Travel Assistant</h3>
-              <p className="text-gray-400">Let's create your perfect Jharkhand experience</p>
+              <h3 className="text-2xl font-bold text-white">
+                AI Travel Assistant
+              </h3>
+              <p className="text-gray-400">
+                Let's create your perfect Jharkhand experience
+              </p>
             </div>
           </div>
 
@@ -106,7 +111,9 @@ export function TravelPlanner() {
               {/* Date and Duration */}
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-white font-medium mb-2">Start Date</label>
+                  <label className="block text-white font-medium mb-2">
+                    Start Date
+                  </label>
                   <input
                     type="date"
                     value={startDate}
@@ -115,7 +122,9 @@ export function TravelPlanner() {
                   />
                 </div>
                 <div>
-                  <label className="block text-white font-medium mb-2">Duration</label>
+                  <label className="block text-white font-medium mb-2">
+                    Duration
+                  </label>
                   <select
                     value={duration}
                     onChange={(e) => setDuration(e.target.value)}
@@ -132,7 +141,9 @@ export function TravelPlanner() {
 
               {/* Interests */}
               <div>
-                <label className="block text-white font-medium mb-4">Your Interests</label>
+                <label className="block text-white font-medium mb-4">
+                  Your Interests
+                </label>
                 <div className="grid grid-cols-2 gap-3">
                   {interests.map((interest) => (
                     <motion.button
@@ -142,13 +153,15 @@ export function TravelPlanner() {
                       onClick={() => toggleInterest(interest.id)}
                       className={`p-3 rounded-xl text-left transition-all duration-300 ${
                         selectedInterests.includes(interest.id)
-                          ? 'bg-gradient-to-r from-sky-400 to-emerald-400 text-black'
-                          : 'glass-dark border border-white/20 text-white hover:border-sky-400'
+                          ? "bg-gradient-to-r from-sky-400 to-emerald-400 text-black"
+                          : "glass-dark border border-white/20 text-white hover:border-sky-400"
                       }`}
                     >
                       <div className="flex items-center gap-2">
                         <span className="text-lg">{interest.icon}</span>
-                        <span className="text-sm font-medium">{interest.label}</span>
+                        <span className="text-sm font-medium">
+                          {interest.label}
+                        </span>
                       </div>
                     </motion.button>
                   ))}
@@ -160,7 +173,9 @@ export function TravelPlanner() {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={generateItinerary}
-                disabled={!startDate || !duration || selectedInterests.length === 0}
+                disabled={
+                  !startDate || !duration || selectedInterests.length === 0
+                }
                 className="w-full py-4 bg-gradient-to-r from-sky-400 to-emerald-400 text-black font-bold rounded-xl text-lg disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg hover:shadow-sky-500/25 transition-all duration-300"
               >
                 🚀 Generate My Itinerary
@@ -176,11 +191,15 @@ export function TravelPlanner() {
               >
                 {/* Central AI Core */}
                 <motion.div
-                  animate={{ 
+                  animate={{
                     scale: [1, 1.1, 1],
-                    rotate: [0, 180, 360]
+                    rotate: [0, 180, 360],
                   }}
-                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                  transition={{
+                    duration: 4,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  }}
                   className="w-32 h-32 bg-gradient-to-r from-sky-400 to-emerald-400 rounded-full flex items-center justify-center"
                 >
                   <span className="text-4xl">🧠</span>
@@ -191,22 +210,24 @@ export function TravelPlanner() {
                   <motion.div
                     key={i}
                     animate={{ rotate: 360 }}
-                    transition={{ 
-                      duration: 8 + i * 2, 
-                      repeat: Infinity, 
-                      ease: "linear" 
+                    transition={{
+                      duration: 8 + i * 2,
+                      repeat: Infinity,
+                      ease: "linear",
                     }}
                     className="absolute inset-0"
                     style={{
-                      transformOrigin: '50% 50%'
+                      transformOrigin: "50% 50%",
                     }}
                   >
                     <div
                       className="absolute w-4 h-4 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full"
                       style={{
-                        top: '10%',
-                        left: '50%',
-                        transform: `translateX(-50%) rotate(${i * 60}deg) translateY(${60 + i * 10}px)`
+                        top: "10%",
+                        left: "50%",
+                        transform: `translateX(-50%) rotate(${
+                          i * 60
+                        }deg) translateY(${60 + i * 10}px)`,
                       }}
                     />
                   </motion.div>
@@ -251,20 +272,29 @@ export function TravelPlanner() {
                   className="glass rounded-2xl p-6 hover:bg-white/10 transition-all duration-300"
                 >
                   <div className="flex items-center justify-between mb-4">
-                    <h4 className="text-white font-bold text-lg">{itinerary.title}</h4>
+                    <h4 className="text-white font-bold text-lg">
+                      {itinerary.title}
+                    </h4>
                     <span className="text-2xl bg-gradient-to-r from-sky-400 to-emerald-400 bg-clip-text text-transparent font-bold">
                       {itinerary.price}
                     </span>
                   </div>
 
-                  <p className="text-gray-400 text-sm mb-4">{itinerary.duration}</p>
+                  <p className="text-gray-400 text-sm mb-4">
+                    {itinerary.duration}
+                  </p>
 
                   <div className="space-y-3 mb-6">
                     <div>
-                      <span className="text-sky-400 font-medium text-sm">Destinations:</span>
+                      <span className="text-sky-400 font-medium text-sm">
+                        Destinations:
+                      </span>
                       <div className="flex flex-wrap gap-1 mt-1">
                         {itinerary.destinations.map((dest, idx) => (
-                          <span key={idx} className="text-xs px-2 py-1 bg-white/10 rounded-full text-gray-300">
+                          <span
+                            key={idx}
+                            className="text-xs px-2 py-1 bg-white/10 rounded-full text-gray-300"
+                          >
                             {dest}
                           </span>
                         ))}
@@ -272,10 +302,15 @@ export function TravelPlanner() {
                     </div>
 
                     <div>
-                      <span className="text-emerald-400 font-medium text-sm">Highlights:</span>
+                      <span className="text-emerald-400 font-medium text-sm">
+                        Highlights:
+                      </span>
                       <ul className="mt-1 space-y-1">
                         {itinerary.highlights.map((highlight, idx) => (
-                          <li key={idx} className="text-xs text-gray-300 flex items-center gap-2">
+                          <li
+                            key={idx}
+                            className="text-xs text-gray-300 flex items-center gap-2"
+                          >
                             <div className="w-1.5 h-1.5 bg-gradient-to-r from-sky-400 to-emerald-400 rounded-full"></div>
                             {highlight}
                           </li>
