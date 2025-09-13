@@ -246,7 +246,7 @@ export function Footer() {
               </motion.div>
               <div>
                 <div className="text-white font-bold text-lg">Aaranya Jharkhand</div>
-                <div className="text-gray-400 text-sm">© 2024 All rights reserved</div>
+                <div className="text-gray-400 text-sm">© 2025 All rights reserved</div>
               </div>
             </div>
 

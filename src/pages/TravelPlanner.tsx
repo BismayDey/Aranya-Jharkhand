@@ -85,7 +85,7 @@ const budgetRanges = [
   {
     id: "budget",
     label: "Forest Explorer",
-    range: "₹12,000 - ₹25,000",
+    range: "₹2000 - ₹3000",
     icon: "💰",
     features: [
       "Eco-lodges",
@@ -97,7 +97,7 @@ const budgetRanges = [
   {
     id: "standard",
     label: "Heritage Traveler",
-    range: "₹25,000 - ₹55,000",
+    range: "₹3000 - ₹6000",
     icon: "💳",
     features: [
       "Heritage hotels",
@@ -109,7 +109,7 @@ const budgetRanges = [
   {
     id: "premium",
     label: "Luxury Explorer",
-    range: "₹55,000 - ₹95,000",
+    range: "₹6000 - ₹8000",
     icon: "💎",
     features: [
       "Luxury resorts",
@@ -121,13 +121,11 @@ const budgetRanges = [
   {
     id: "luxury",
     label: "Elite Aaranya",
-    range: "₹95,000+",
+    range: "₹9000+",
     icon: "👑",
     features: [
       "Ultra-luxury accommodations",
-      "Helicopter access",
-      "Celebrity chef",
-      "Bespoke experiences",
+      "Access to Private Reserves", 
     ],
   },
 ];
@@ -1685,8 +1683,8 @@ export function TravelPlanner() {
                     >
                       <option value="guided">Expert-Guided Journey</option>
                       <option value="self">Independent Exploration</option>
-                      <option value="custom">Bespoke Experience</option>
-                      <option value="luxury">Ultra-Premium Adventure</option>
+                      <option value="custom">Signature Experience Experience</option>
+                      <option value="luxury">Premium Adventure</option>
                     </select>
                   </div>
                 </motion.div>
