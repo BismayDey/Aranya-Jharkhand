@@ -123,10 +123,7 @@ const budgetRanges = [
     label: "Elite Aaranya",
     range: "₹9000+",
     icon: "👑",
-    features: [
-      "Ultra-luxury accommodations",
-      "Access to Private Reserves", 
-    ],
+    features: ["Ultra-luxury accommodations", "Access to Private Reserves"],
   },
 ];
 
@@ -1683,7 +1680,9 @@ export function TravelPlanner() {
                     >
                       <option value="guided">Expert-Guided Journey</option>
                       <option value="self">Independent Exploration</option>
-                      <option value="custom">Signature Experience Experience</option>
+                      <option value="custom">
+                        Signature Experience Experience
+                      </option>
                       <option value="luxury">Premium Adventure</option>
                     </select>
                   </div>

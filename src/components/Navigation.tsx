@@ -197,13 +197,13 @@ export function Navigation({ onOpenAuthModal }: NavigationProps) {
               </div>
             )}
 
-            <Link to="/gallery">
+            <Link to="/g">
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className="px-6 py-2 bg-[#18B668] hover:bg-[#18B668]/90 text-white font-medium rounded-xl hover:shadow-lg hover:shadow-[#18B668]/25 transition-all duration-300"
               >
-                Gallery
+                Plan Trips
               </motion.button>
             </Link>
           </div>
