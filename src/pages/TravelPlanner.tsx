@@ -1258,7 +1258,8 @@ const generateSuperDetailedItinerary = (
         }))
         .filter((d: any) => !existingNames.has(d.name));
       if (toAdd.length > 0) {
-        plan.destinations = [...toAdd, ...plan.destinations];
+        // Insert preferred cities but keep the most relevant primary destinations first
+        plan.destinations = [...toAdd.slice(0, 2), ...plan.destinations];
       }
     });
   }
