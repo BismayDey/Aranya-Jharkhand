@@ -63,12 +63,10 @@ export function Home() {
 
   // Hero video playlist (files are in public/Hero video/)
   const heroVideos = [
-    "/Hero%20video/hero%20section%201.mp4",
-    "/Hero%20video/hero%20section%202.mp4",
-    "/Hero%20video/hero%20section%203.mp4",
-    "/Hero%20video/hero%20section%204.mp4",
-    "/Hero%20video/hero%20section%205.mp4",
     "/Hero%20video/Hero%20section%206.mp4",
+    "/Hero%20video/hero%20section%203.mp4",
+
+    "/Hero%20video/hero%20section%205.mp4",
   ];
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [videoIndex, setVideoIndex] = useState(0);
