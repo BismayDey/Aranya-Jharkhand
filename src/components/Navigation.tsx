@@ -197,7 +197,7 @@ export function Navigation({ onOpenAuthModal }: NavigationProps) {
               </div>
             )}
 
-            <Link to="/g">
+            <Link to="/travel-planner">
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}

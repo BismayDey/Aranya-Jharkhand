@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useMemo, useCallback } from "react";
+import LocationMarker from "../../public/LOCATION MARKER.svg";
 import { motion } from "motion/react";
 import { Navigation, Compass, Mountain, Star, Clock } from "lucide-react";
 import Map, {
@@ -46,6 +47,7 @@ export function TourismMap({
   const [internalStyle, setInternalStyle] = useState(styleVariant);
   const [searchTerm, setSearchTerm] = useState("");
   const [userPos, setUserPos] = useState<[number, number] | null>(null);
+  const [showUserMarker, setShowUserMarker] = useState(false);
 
   const mapCenter = useMemo(
     () => ({
@@ -296,9 +298,14 @@ export function TourismMap({
             );
           })()}
 
-        {userPos && (
+        {userPos && showUserMarker && (
           <Marker longitude={userPos[0]} latitude={userPos[1]} anchor="bottom">
-            <div className="w-3.5 h-3.5 rounded-full bg-sky-400 ring-4 ring-sky-400/30 shadow animate-pulse" />
+            <img
+              src={LocationMarker}
+              alt="My Location"
+              style={{ width: 32, height: 32 }}
+              className="drop-shadow-lg"
+            />
           </Marker>
         )}
 
@@ -462,12 +469,14 @@ export function TourismMap({
           </button>
           <button
             onClick={() => {
-              if (userPos)
+              if (userPos) {
+                setShowUserMarker(true);
                 mapRef.current?.flyTo({
                   center: userPos as any,
                   zoom: 11,
                   duration: 1000,
                 });
+              }
             }}
             className="px-3 py-2 text-xs rounded-lg bg-black/40 backdrop-blur text-white hover:bg-black/60 transition disabled:opacity-40"
             disabled={!userPos}

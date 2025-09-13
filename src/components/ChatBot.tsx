@@ -43,7 +43,7 @@ export function ChatBot({ className = "" }: ChatBotProps) {
       id: "1",
       type: "bot",
       content:
-        "🙏 Namaste! I'm your AI travel companion for Jharkhand. I can help you with destinations, bookings, cultural insights, and local tips. What would you like to explore?",
+        "🙏 Namaste! I'm Gajraj, your AI travel companion for Jharkhand. I can help you with destinations, bookings, cultural insights, and local tips. What would you like to explore?",
       timestamp: new Date(),
       suggestions: [
         "Popular Destinations",
@@ -458,7 +458,7 @@ export function ChatBot({ className = "" }: ChatBotProps) {
 
           {/* Tooltip */}
           <div className="absolute bottom-full right-0 mb-2 px-3 py-2 bg-black/90 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap backdrop-blur-md">
-            AI Travel Assistant
+            Gajraj
             <div className="absolute top-full right-4 border-4 border-transparent border-t-black/90"></div>
           </div>
 
@@ -519,7 +519,7 @@ export function ChatBot({ className = "" }: ChatBotProps) {
                       <Bot className="w-6 h-6 hidden" />
                     </div>
                     <div>
-                      <h3 className="font-semibold">AI Travel Assistant</h3>
+                      <h3 className="font-semibold">Gajraj</h3>
                       <p className="text-sm text-white/80">
                         Always here to help
                       </p>
